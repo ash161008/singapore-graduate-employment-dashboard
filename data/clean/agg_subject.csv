@@ -1,4 +1,4 @@
-﻿"subject","field","n_programmes","median_gross","median_basic","median_p25","median_p75","mean_employment","mean_ft_perm","mean_insecure_pp","median_pay_spread","n_followup_records","n_small_sample"
+﻿"subject","field","n_programmes","median_gross","median_basic","median_p25","median_p75","mean_employment","mean_ft_perm","mean_non_ft_perm_pp","median_pay_spread","n_followup_records","n_small_sample"
 "Business and Computer Engineering / Computing","Computing & IT",5,6250,6000,5500,7000,96.04,93.74,2.3,1500,0,0
 "Medicine","Medicine & Dentistry",4,5550,4700,5199.5,5950,100,100,0,846.5,4,0
 "Information Security","Computing & IT",5,5500,5400,4800,6210,93.34,92.04,1.3,1210,0,2
@@ -86,7 +86,7 @@
 "Science","Science",32,3527.5,3390,3200,4000,87.06875,70.221875,16.846875,712.5,0,8
 "Arts","Arts, Humanities & Social Sciences",32,3500,3500,3162.5,3918.5,87.878125,69.44375,18.434375000000003,815,0,2
 "Biological Sciences / Biomedical Sciences","Science",1,3500,3400,3260,3800,96.8,81.7,15.099999999999994,540,0,0
-"Biomedical Engineering","Engineering",11,3500,3500,3280,3740,87.41818181818182,75.1,12.318181818181822,600,0,1
+"Biomedical Engineering","Engineering",11,3500,3500,3280,3740,87.41818181818182,75.1,12.318181818181822,600,0,0
 "Chemical Engineering","Engineering",33,3500,3250,3150,3865,86.98787878787878,76.77878787878788,10.20909090909091,700,0,0
 "Civil Engineering","Engineering",29,3500,3500,3300,3900,94.19655172413793,90.37931034482759,3.817241379310344,565,0,0
 "Electrical Power Engineering","Engineering",10,3500,3450,3325,3775,90.41,80.85,9.560000000000002,500,0,1

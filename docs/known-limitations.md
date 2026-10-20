@@ -39,7 +39,45 @@ claim about "the average Singapore graduate".
 
 ---
 
-## 2. Coverage is incomplete and the gaps are not random
+## 2. The pay figures and the employment rates describe different populations
+
+MOE's salary figures cover full-time permanently employed graduates only. The employment
+rates are percentages of the labour force, meaning graduates working plus those not
+working but actively looking and available.
+
+So the two halves of the dataset are measured on different groups, and the gap between
+them is exactly the group the pay figures leave out. A graduate in part-time, temporary
+or freelance work is counted in `employment_rate_overall`, excluded from
+`employment_rate_ft_perm`, and has no salary recorded anywhere in the dataset.
+
+That has a direct consequence for reading pay by field. A programme with a large
+`non_ft_perm_employment_pp` has a pay figure covering a smaller share of its graduates:
+
+| Field (2022-24) | Employed | Not full-time permanent | So pay describes roughly | Median gross |
+|---|---|---|---|---|
+| Computing & IT | 89.5% | 3.0pp | 87% of the labour force | S$5,400 |
+| Engineering | 87.5% | 5.4pp | 82% | S$4,400 |
+| Arts, Humanities & Social Sciences | 86.9% | 15.2pp | 72% | S$4,000 |
+| Design & Media | 80.8% | 21.4pp | **59%** | S$3,600 |
+
+Design & Media's S$3,600 is the lowest median in the data and it also describes the
+smallest share of any field's graduates. The roughly 40% of its labour force not in
+full-time permanent work are not in that figure at all, and there is no reason to assume
+they earn more than the ones who are. So the real position for Design & Media graduates
+is probably worse than S$3,600 suggests, not better.
+
+This strengthens the page 3 finding rather than weakening it, but it has to be stated
+that way round. The claim to make is not "Design & Media graduates earn S$3,600". It is
+"among Design & Media graduates who found full-time permanent work, the median is
+S$3,600, and two in five did not find that kind of work."
+
+Nothing in the data fixes this, since the unreported group is unreported. The dashboard
+shows both measures side by side so a reader can see the coverage shrinking as the gap
+widens.
+
+---
+
+## 3. Coverage is incomplete and the gaps are not random
 
 | University | Years present | Missing |
 |---|---|---|
@@ -69,7 +107,7 @@ wording.
 
 ---
 
-## 3. Programmes with few graduates are missing by design
+## 4. Programmes with few graduates are missing by design
 
 105 records (6.8% of the raw file) have no figure for any of the eight measures, because
 MOE suppresses results for programmes with too few graduates to publish. They cover 5
@@ -82,7 +120,7 @@ cohorts are the most likely to be suppressed.
 
 ---
 
-## 4. The field grouping is ours, not MOE's
+## 5. The field grouping is ours, not MOE's
 
 The survey publishes no field grouping. The 13 fields come from keyword rules in
 `R/00_setup.R`, tested in a fixed order.
@@ -110,7 +148,7 @@ and Economics" is Engineering.
 
 ---
 
-## 5. Subjects are merged across universities on purpose
+## 6. Subjects are merged across universities on purpose
 
 The `subject` column removes award wording so the same subject can be compared between
 institutions. That means some deliberate merges:
@@ -126,7 +164,7 @@ comparing subjects and not programme structures.
 
 ---
 
-## 6. Four fields are not fresh-graduate data
+## 7. Four fields are not fresh-graduate data
 
 This is the most serious problem for interpretation, and it is invisible unless you read
 MOE's footnote legend, which is on the dataset page and not in the CSV.
@@ -181,19 +219,21 @@ aggregate table carries `n_followup_records`, so a figure cannot be quoted witho
 caveat sitting in the same table.
 
 A second flag comes from the same legend. `^` marks figures based on fewer than 30
-respondents, which is 120 records, 8.3% of the cleaned data. Those figures are published
+respondents, which is 119 records, 8.2% of the cleaned data. Those figures are published
 but thin, and should not carry a trend claim on their own. They are kept as
 `flag_small_sample`, with `n_small_sample` on every aggregate.
 
 ---
 
-## 7. Two data-quality issues kept rather than corrected
+## 8. Two data-quality issues kept rather than corrected
 
-Gross pay below basic pay. One record has a gross median 0.50% below its basic median.
-This comes from the source: MOE works the gross and basic figures out from the
-respondents who answered each question, and those groups are not the same. The record is
-kept and flagged in `fact_employment[flag_gross_below_basic]` instead of corrected,
-since making up a value would be worse than carrying a known 0.5% inconsistency.
+Gross pay below basic pay. One record has a gross median 0.50% below its basic median,
+which should not happen since gross adds overtime, allowances and bonuses to basic. The
+cause is not documented in the published source, so no explanation is offered for it
+here. What can be said is that the value is as published and is not produced by this
+cleaning. The record is kept and flagged in `fact_employment[flag_gross_below_basic]`
+rather than corrected, since making up a value would be worse than carrying a known
+0.5% inconsistency.
 
 A school name in the degree column. One 2024 SUSS record was published with "School of
 Public Safety and Security" where the programme name belongs. It is corrected to
@@ -203,7 +243,7 @@ changes what a record is, and the mapping is listed in `R/00_setup.R`.
 
 ---
 
-## 8. What the survey measures and what it does not
+## 9. What the survey measures and what it does not
 
 - Graduates are surveyed about six months after their final examinations: November of
   the graduation year for NTU, NUS, SMU and SUSS, March of the following year for SIT,
@@ -221,12 +261,15 @@ changes what a record is, and the mapping is listed in `R/00_setup.R`.
 - Response rates are not published per programme, so a programme's figures may rest on a
   small or unrepresentative share of its cohort and there is no way to tell which.
 - The employment rate counts employment of any kind, which is the reason for the
-  `insecure_work_pp` measure: the headline rate treats a permanent job and a temporary
-  placement the same way.
+  `non_ft_perm_employment_pp` measure: the headline rate treats a permanent job and a
+  temporary placement the same way.
+- Both employment rates are percentages of the labour force rather than of all
+  graduates, so a 90% rate does not mean 90% of graduates have jobs. Graduates in
+  further study or national service are outside the denominator.
 
 ---
 
-## 9. The honours premium covers one university
+## 10. The honours premium covers one university
 
 SMU is the only institution publishing a Cum Laude and above subset alongside its full
 cohort, so the premium on page 4 is an SMU finding and not a sector one. It should not
@@ -240,7 +283,7 @@ page-level filter.
 
 ---
 
-## 10. Validation, and what it caught
+## 11. Validation, and what it caught
 
 The pipeline runs 29 checks (21 in cleaning, 8 in transformation) and stops on any
 failure. They fall into three kinds, and the difference is worth a sentence in the Data
@@ -260,7 +303,7 @@ looks like the name of a subject.
 Provenance checks were added after the footnote markers were found to be meaningful. The
 pipeline had been deleting them on the assumption that they carried no information once
 the table was separated from its notes, but the notes were published on the dataset page
-the whole time. The markers held a sample-size warning on 120 records and a cohort-timing
+the whole time. The markers held a sample-size warning on 119 records and a cohort-timing
 warning on 76, and one of the dashboard's main comparisons was built on the result. The
 pipeline now checks that every footnote symbol in the file is one the legend defines, so
 a new undocumented marker in a future release stops the run instead of passing through.

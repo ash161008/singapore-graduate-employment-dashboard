@@ -49,7 +49,7 @@ clean_log <- log_step(clean_log, "2. Repair encoding",
 #       years earlier.
 #   **  no figures published, because of small numbers or a low response rate
 #
-# Removing them would lose a sample-size warning on 120 records and a cohort
+# Removing them would lose a sample-size warning on 119 records and a cohort
 # warning on 94. A "#" record's pay cannot be compared with an unmarked
 # record's pay, so the warning has to reach the dashboard. The markers are read
 # here, before any name cleaning, and kept as flags. FOOTNOTE_LEGEND in
@@ -57,18 +57,35 @@ clean_log <- log_step(clean_log, "2. Repair encoding",
 dat <- dat |>
   mutate(
     footnote_markers = read_footnote_markers(degree),
-    flag_small_sample    = str_detect(footnote_markers, fixed("^")),
+
+    # "^^" is its own marker, meaning the figures include Bioengineering
+    # graduates, and has nothing to do with sample size. Because it is written
+    # with the same character as "^", it has to be removed before looking for
+    # a single caret, or the one "^^" record is wrongly counted as a small
+    # sample. That gives 119 small-sample records, not 120.
+    flag_small_sample = str_detect(str_remove_all(footnote_markers, fixed("^^")),
+                                   fixed("^")),
+
+    # Substring matching here is deliberate. "#", "##" and "###" are three
+    # different notes but all three say the figures come from a follow-up
+    # survey of an earlier cohort, which is the only thing this flag needs to
+    # record, so matching any "#" is correct rather than sloppy.
     flag_followup_survey = str_detect(footnote_markers, fixed("#"))
   )
 
-# Checked here, on all 1,550 rows, rather than after the suppressed records are
-# dropped. The ** and ## symbols only appear on records with no figures, so a
-# check further down would never see them and would cover half the legend.
-observed_markers <- dat$footnote_markers |> str_split("") |> unlist() |> unique()
-observed_markers <- setdiff(observed_markers, "")
-check_that(observed_markers %in% c("*", "^", "#"),
-           "Every footnote symbol in the file is one the legend defines",
-           setdiff(observed_markers, c("*", "^", "#")))
+# Checked on all 1,550 rows, before the suppressed records are dropped in step
+# 6. Some combinations appear only on records with no published figures ("**",
+# "#**", "**#" and "##"), so a check placed after that step would never see
+# them. "###" appears on both kinds: three records with no figures and one with
+# figures that survives cleaning.
+#
+# The test is on the whole combination rather than the individual characters,
+# so a combination MOE has not used before stops the run instead of being read
+# as one of the overlapping single-symbol meanings.
+observed_combinations <- unique(dat$footnote_markers)
+check_that(observed_combinations %in% KNOWN_MARKER_COMBINATIONS,
+           "Every footnote marker combination in the file is one the legend accounts for",
+           setdiff(observed_combinations, KNOWN_MARKER_COMBINATIONS))
 
 message("  [note] footnote markers read from the file as imported: ",
         sum(dat$flag_small_sample), " record(s) based on fewer than 30 ",
@@ -324,13 +341,12 @@ check_that(with(dat, is.na(gross_monthly_median) | is.na(gross_mthly_75_percenti
            "Gross median does not exceed the gross 75th percentile")
 
 # Gross pay should be at or above basic pay, since gross adds overtime,
-# allowances and bonuses. One record breaks this. It comes from the source
-# rather than from this cleaning: MOE works out the gross and basic figures
-# from the respondents who answered each question, and those groups are not the
-# same, so gross can come out slightly below basic. The record is kept and
-# flagged, since dropping a valid programme would distort more than a 0.5%
-# inconsistency does. The check tests that the gap stays small rather than that
-# it never happens.
+# allowances and bonuses. One record breaks this, by 0.50%. The cause is not
+# documented in the published source, so no explanation is offered here. What
+# can be said is that the figure comes from the file as published and is not
+# produced by this cleaning. The record is kept and flagged, since dropping a
+# valid programme would distort more than carrying a known 0.5% inconsistency.
+# The check tests that the gap stays small rather than that it never happens.
 dat <- dat |>
   mutate(
     gross_basic_discrepancy_pct = if_else(

@@ -214,6 +214,25 @@ FOOTNOTE_LEGEND <- tribble(
          "flag_followup_survey"
 )
 
+# Every marker combination that appears in the file as downloaded. Checking the
+# whole combination rather than the individual symbols matters because the
+# symbols overlap: "^" and "^^" are different markers that share a character,
+# and "#", "##" and "###" are three different notes. If MOE publishes a
+# combination that is not listed here, the run stops rather than guessing which
+# of the overlapping readings applies.
+KNOWN_MARKER_COMBINATIONS <- c(
+  "",      # no note
+  "^",     # fewer than 30 respondents
+  "^^",    # includes Bioengineering graduates
+  "#",     # follow-up survey
+  "##",    # NTU Medicine follow-up
+  "###",   # SUTD Architecture and Sustainable Design follow-up
+  "#^",    # follow-up survey, and fewer than 30 respondents
+  "**",    # no figures published
+  "#**",   # follow-up programme, figures not published
+  "**#"    # same pair, printed in the other order
+)
+
 # ---- Source errors -----------------------------------------------------------
 # One 2024 SUSS record has a school name in its degree column, where MOE filed
 # "School of Public Safety and Security" instead of the programme name. SUSS

@@ -45,11 +45,18 @@ employment <- employment_clean |>
     variable_pay_pct = 100 * (gross_monthly_median - basic_monthly_median) /
       basic_monthly_median,
 
-    # Job quality. The headline employment rate counts any kind of employment.
-    # The gap between it and the full-time permanent rate is the share of
-    # employed graduates in part-time, temporary or freelance work, which the
-    # headline rate hides.
-    insecure_work_pp = employment_rate_overall - employment_rate_ft_perm,
+    # Job quality. The headline employment rate counts any kind of employment,
+    # so the gap between it and the full-time permanent rate is the share of
+    # the labour force in part-time, temporary, freelance or contract work.
+    #
+    # Named for what it measures rather than "insecure", because part-time work
+    # is not always involuntary and the survey does not say which is which.
+    #
+    # This also matters for reading the pay columns. MOE's salary figures cover
+    # full-time permanently employed graduates only, so the graduates counted
+    # here have no salary recorded anywhere in the dataset. A programme with a
+    # large gap has a pay figure describing a smaller share of its graduates.
+    non_ft_perm_employment_pp = employment_rate_overall - employment_rate_ft_perm,
 
     # A readable version of the follow-up flag, so a legend or caption can say
     # what it means instead of showing TRUE/FALSE. These records cover
@@ -214,7 +221,7 @@ fact_employment <- employment |>
     all_of(MEASURE_COLS),
     pay_spread_sgd, pay_spread_ratio,
     variable_pay_sgd, variable_pay_pct,
-    insecure_work_pp,
+    non_ft_perm_employment_pp,
     pay_vs_cohort_sgd, pay_index, employment_vs_cohort_pp,
     # Flags taken from MOE's footnote markers in cleaning step 3. They go in
     # the fact table rather than a dimension because they vary record by
@@ -251,7 +258,7 @@ summarise_outcomes <- function(data) {
       median_p75          = median(gross_mthly_75_percentile, na.rm = TRUE),
       mean_employment     = mean(employment_rate_overall, na.rm = TRUE),
       mean_ft_perm        = mean(employment_rate_ft_perm, na.rm = TRUE),
-      mean_insecure_pp    = mean(insecure_work_pp, na.rm = TRUE),
+      mean_non_ft_perm_pp    = mean(non_ft_perm_employment_pp, na.rm = TRUE),
       median_pay_spread   = median(pay_spread_sgd, na.rm = TRUE),
       # Each aggregate reports how much of it is not fresh-graduate data and
       # how much rests on fewer than 30 respondents, so the caveat sits in the

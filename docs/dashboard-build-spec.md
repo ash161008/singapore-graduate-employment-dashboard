@@ -25,7 +25,7 @@ A note on page 3. An earlier version of these notes contrasted Design & Media wi
 all of Law's records come from a follow-up survey of qualified lawyers after pupillage
 rather than fresh graduates. The Computing & IT comparison above is like-for-like, and
 page 3 is now built so a reader can see which points are measured differently. See the
-page 3 section and `known-limitations.md` section 6.
+page 3 section and `known-limitations.md` section 7.
 
 Page 5 is the interactive explorer, where a reader can test all four claims against any
 course they are considering.
@@ -210,7 +210,7 @@ Median Gross Pay      = MEDIAN ( fact_employment[gross_monthly_median] )
 Median Basic Pay      = MEDIAN ( fact_employment[basic_monthly_median] )
 Employment Rate       = AVERAGE ( fact_employment[employment_rate_overall] )
 FT Permanent Rate     = AVERAGE ( fact_employment[employment_rate_ft_perm] )
-Insecure Work Gap     = AVERAGE ( fact_employment[insecure_work_pp] )
+Non-FT-Perm Employment Gap     = AVERAGE ( fact_employment[non_ft_perm_employment_pp] )
 Programmes            = COUNTROWS ( fact_employment )
 
 -- Distribution -------------------------------------------------------------
@@ -327,8 +327,8 @@ and nothing should compete with it.
 | # | Visual | Field wells | Why this form |
 |---|---|---|---|
 | 1 | **Line chart** (2 series, one axis) | X `dim_year[year_date]` · Y `[Employment Rate]` + `[FT Permanent Rate]` | Both series are percentages so they share one axis, and the gap between the lines is what the page is about. A second y-axis would hide it. Legend on, plus direct labels on both final points |
-| 2 | **Column chart** | X `dim_year[year]` · Y `[Insecure Work Gap]` | The same point as a magnitude. The 2020 column at 23.7pp against a 5-10pp norm reads at a glance |
-| 3 | **Card** ×3 | `[Employment Rate]`, `[FT Permanent Rate]`, `[Insecure Work Gap]` with a page filter of `year = 2020` | Fixes the specific numbers on the page |
+| 2 | **Column chart** | X `dim_year[year]` · Y `[Non-FT-Perm Employment Gap]` | The same point as a magnitude. The 2020 column at 23.7pp against a 5-10pp norm reads at a glance |
+| 3 | **Card** ×3 | `[Employment Rate]`, `[FT Permanent Rate]`, `[Non-FT-Perm Employment Gap]` with a page filter of `year = 2020` | Fixes the specific numbers on the page |
 | 4 | **Textbox** | *"2020's record employment rate counted traineeships and temporary placements. Only 70.3% of that cohort held a full-time permanent job, the lowest in twelve years."* | Some charts need a sentence of context |
 
 **Visual 1 detail**: shade the pandemic years. Add a `Shaded area` via
@@ -344,19 +344,48 @@ recessive puts the emphasis where it belongs.
 ---
 
 ### Page 3 — "Not everyone carries the risk"
-*Subtitle: Pay and job security are different questions, and they have different answers by field.*
+*Subtitle: The published pay figure covers only graduates in full-time permanent work, so the fields with the worst pay are also the fields it describes least.*
+
+> **The point of this page, stated precisely.** MOE's salary figures cover full-time
+> permanently employed graduates only, while the employment rates are percentages of the
+> labour force. So the gap between the two rates is exactly the group the pay figure
+> leaves out, and a field with a wide gap has a pay figure covering fewer of its own
+> graduates:
+>
+> | Field (2022-24) | Employed | Not FT permanent | Pay figure covers | Median gross |
+> |---|---|---|---|---|
+> | Computing & IT | 89.5% | 3.0pp | ~87% | S$5,400 |
+> | Engineering | 87.5% | 5.4pp | ~82% | S$4,400 |
+> | Arts, Humanities & Social Sciences | 86.9% | 15.2pp | ~72% | S$4,000 |
+> | Design & Media | 80.8% | 21.4pp | **~59%** | S$3,600 |
+>
+> Design & Media has the lowest median in the data and the narrowest coverage behind it.
+> The roughly 40% of its labour force not in full-time permanent work have no salary in
+> the dataset at all, and there is no reason to assume they earn more than those who do.
+> So its real position is probably worse than S$3,600 suggests.
+>
+> Write the finding this way round: not "Design & Media graduates earn S$3,600", but
+> "among Design & Media graduates who found full-time permanent work the median is
+> S$3,600, and two in five did not find that kind of work."
 
 | # | Visual | Field wells | Why this form |
 |---|---|---|---|
-| 1 | **Scatter chart** | X `[Median Gross Pay]` · Y `[Insecure Work Gap]` · Details `dim_field[field]` · Size `[Programmes]` | Two measures, one point per field. This is the form that shows pay and security are not the same ranking. 13 points, category labels on. Not coloured per field: a scatter can put any two points next to each other, so it caps at three colour series |
-| 2 | **Clustered bar chart** | Y `dim_field[field]` · X `[Insecure Work Gap]` · sorted descending | Magnitude across 13 long category names, so horizontal bars in one hue |
+| 1 | **Scatter chart** | X `[Median Gross Pay]` · Y `[Non-FT-Perm Employment Gap]` · Details `dim_field[field]` · Size `[Programmes]` | Two measures, one point per field. Shows that pay and job security are not the same ranking, and that the two axes describe different populations. 13 points, category labels on. Not coloured per field: a scatter can put any two points next to each other, so it caps at three colour series |
+| 2 | **Clustered bar chart** | Y `dim_field[field]` · X `[Non-FT-Perm Employment Gap]` · sorted descending | Magnitude across 13 long category names, so horizontal bars in one hue |
 | 3 | **Line chart, small multiples** | X `dim_year[year_date]` · Y `[Median Pay Index]` · Small multiples `dim_field[field]` · grid 4×2, "Show all" off | 13 series on one chart is three times the colour ceiling, so small multiples rather than more hues. Uses the pay index instead of raw pay, so inflation and sector-wide wage growth are already out and a rising panel means pulling ahead of peers |
 | 4 | **Line chart** | X `dim_field[field]` sorted · Y `[Median P25]`, `[Median Gross Pay]`, `[Median P75]` | Three series in the same unit on one axis, showing the spread behind each field's median. Health Sciences spreads S$391 against Computing's S$1,452 |
 
 **Visual 1 detail**: add quadrant reference lines (`Analytics → X-Axis constant line` at
 the all-field median pay, `Y-Axis constant line` at the all-field mean gap), both
-`#c3c2b7` dotted. Label the quadrants with four small textboxes — "well paid, secure" /
-"well paid, insecure" / "lower paid, secure" / "lower paid, insecure".
+`#c3c2b7` dotted. Label the quadrants with four small textboxes: "well paid, mostly
+permanent" / "well paid, often not permanent" / "lower paid, mostly permanent" /
+"lower paid, often not permanent". Avoid the word "insecure" on the canvas, since
+part-time work is not always involuntary and the survey does not say which is which.
+
+Set the x-axis title to *Median gross monthly pay, full-time permanent employees only
+(S$)* and the y-axis title to *Share of labour force not in full-time permanent work
+(percentage points)*. Those two titles are what stop a reader assuming both axes cover
+the same people.
 
 ### Important: visual 1 is not a like-for-like comparison by default
 
@@ -449,7 +478,7 @@ Filters belong in one place, not scattered between charts.
 | 2 | **Slicer** | `dim_university[university_code]`, **Tile** style, multi-select on |
 | 3 | **Slicer** | `dim_field[field]`, **Dropdown**, "Select all" on |
 | 4 | **Slicer** | `dim_school[award_route]`, Tile — SIT's own awards vs overseas partner awards |
-| 5 | **Matrix** | Rows: `dim_field[field]` → `dim_degree[subject]` → `dim_degree[degree]` (three levels, drill-down on). Values: `[Median Gross Pay]`, `[Employment Rate]`, `[Insecure Work Gap]`, `[Median Pay Index]`, `[Programmes]`. Conditional formatting: **data bars** on Median Gross Pay, a `#cde2fb`→`#0d366b` background scale on Median Pay Index, and a `#0ca30c`/`#d03b3b` scale on Insecure Work Gap (reversed — low is good) |
+| 5 | **Matrix** | Rows: `dim_field[field]` → `dim_degree[subject]` → `dim_degree[degree]` (three levels, drill-down on). Values: `[Median Gross Pay]`, `[Employment Rate]`, `[Non-FT-Perm Employment Gap]`, `[Median Pay Index]`, `[Programmes]`. Conditional formatting: **data bars** on Median Gross Pay, a `#cde2fb`→`#0d366b` background scale on Median Pay Index, and a `#0ca30c`/`#d03b3b` scale on Non-FT-Perm Employment Gap (reversed — low is good) |
 | 6 | **Decomposition tree** | Analyse `[Median Gross Pay]`, Explain by `dim_field[field]`, `dim_university[university_code]`, `dim_degree[subject]`, `dim_year[era]` | Lets the reader ask "why is this high?" and follow it down themselves |
 | 7 | **Line chart** | X `dim_year[year_date]` · Y `[Median Pay Index]` alone, with a constant line at 100 (`#c3c2b7`, dotted). The index already carries the comparison, so pairing it with raw pay on the same frame would need a second axis — which this dashboard never uses |
 | 8 | **Card** | `[Selected Scope]` — the dynamic caption, so the reader always knows what is on screen |

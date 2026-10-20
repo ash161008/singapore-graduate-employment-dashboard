@@ -1,4 +1,4 @@
-﻿"year","award_route","n_programmes","median_gross","median_basic","median_p25","median_p75","mean_employment","mean_ft_perm","mean_insecure_pp","median_pay_spread","n_followup_records","n_small_sample","gross_yoy_sgd","gross_yoy_pct","gross_vs_2013_pct"
+﻿"year","award_route","n_programmes","median_gross","median_basic","median_p25","median_p75","mean_employment","mean_ft_perm","mean_non_ft_perm_pp","median_pay_spread","n_followup_records","n_small_sample","gross_yoy_sgd","gross_yoy_pct","gross_vs_2013_pct"
 2014,"Overseas partner award",24,3050,3000,2874.5,3390.5,92.64583333333333,88.18333333333334,4.4624999999999995,567.5,0,0,,,0
 2015,"Overseas partner award",25,3141,3000,2960,3488,91.384,83.776,7.608,488,0,0,91,2.9836065573770494,2.9836065573770494
 2016,"Overseas partner award",26,3237.5,3150,3000,3587.5,89.29230769230769,78.26153846153846,11.03076923076923,527.5,0,0,96.5,3.072269977714104,6.147540983606557

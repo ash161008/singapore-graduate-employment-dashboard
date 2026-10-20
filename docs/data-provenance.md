@@ -55,11 +55,11 @@ these figures in the report, since they are a listed requirement.
 One row per university, faculty, degree programme and survey year.
 
 - 1,550 rows as collected, 1,445 after cleaning. The 105 removed records had no
-  published figures at all (see `known-limitations.md` section 3).
+  published figures at all (see `known-limitations.md` section 4).
 - 6 universities, 43 faculties or awarding institutions, 234 degree programmes, 149
   subjects, 13 fields of study.
 - Coverage is uneven. NTU, NUS and SMU appear in all 12 years; SIT, SUTD and SUSS joined
-  later (`known-limitations.md` section 2).
+  later (`known-limitations.md` section 3).
 
 ### Variables as published
 
@@ -69,8 +69,8 @@ One row per university, faculty, degree programme and survey year.
 | `university` | text | Full name of the awarding university |
 | `school` | text | Faculty, school or overseas awarding partner |
 | `degree` | text | Full award title |
-| `employment_rate_overall` | per cent | Graduates in employment of any kind |
-| `employment_rate_ft_perm` | per cent | Graduates in full-time permanent employment |
+| `employment_rate_overall` | per cent | Percentage of graduates in the labour force who are employed, about six months after final examinations |
+| `employment_rate_ft_perm` | per cent | Percentage of graduates in the labour force in full-time permanent employment |
 | `basic_monthly_mean` | SGD/month | Mean basic salary, excluding overtime, allowances and bonuses |
 | `basic_monthly_median` | SGD/month | Median basic salary |
 | `gross_monthly_mean` | SGD/month | Mean gross salary, including overtime, allowances and bonuses |
@@ -78,8 +78,24 @@ One row per university, faculty, degree programme and survey year.
 | `gross_mthly_25_percentile` | SGD/month | 25th percentile of gross salary |
 | `gross_mthly_75_percentile` | SGD/month | 75th percentile of gross salary |
 
+Two definitions here need stating carefully in the report, because getting them loosely
+wrong changes what the figures mean.
+
+**The employment rates are percentages of the labour force, not of all graduates.** The
+labour force means graduates who are working, plus those not working but actively looking
+and available for work. Graduates not in the labour force at all, for example those in
+further study or national service, are outside the denominator. So a 90% employment rate
+is not "90% of graduates have jobs".
+
+**The salary figures cover full-time permanently employed graduates only.** This is the
+important one. The six pay columns describe a smaller population than the employment
+rates do, which means a programme with a large gap between its overall and full-time
+permanent rates has a pay figure that describes a smaller share of its graduates.
+Graduates in part-time, temporary or freelance work have no salary recorded anywhere in
+the dataset. See `known-limitations.md` section 2.
+
 All eight measures import as text, because missing values are written as the words "na"
-and "N.A.". Every column, including the 10 measures the pipeline derives, is defined in
+and "N.A.". Every column, including the measures the pipeline derives, is defined in
 `data/clean/data_dictionary.csv`.
 
 ---
@@ -126,7 +142,7 @@ from 2021, and DAI arrived in 2024. After cleaning, SUTD 2024 has three usable r
 NTU, NUS and SMU from 2013, SIT from 2014, SUTD from 2015, SUSS from 2018. This matches
 the data. It means the 2013 and 2014 "all universities" figures are really three- and
 four-university figures, so growth measured from 2013 partly reflects institutions being
-added rather than outcomes changing. Covered in `known-limitations.md` section 2.
+added rather than outcomes changing. Covered in `known-limitations.md` section 3.
 
 ---
 
@@ -139,7 +155,7 @@ them, which is only on the dataset page. It is transcribed into `FOOTNOTE_LEGEND
 | Marker | Meaning | How the pipeline handles it |
 |---|---|---|
 | `*` | SMU courses are direct four-year programmes whose graduates may be awarded Cum Laude and above, and SMU publishes the whole cohort and that subset | Separated into `cohort_tier` |
-| `^` | Figures are based on fewer than 30 respondents | `flag_small_sample`, 120 records |
+| `^` | Figures are based on fewer than 30 respondents | `flag_small_sample`, 119 records |
 | `^^` | Includes Bioengineering graduates; that course merged into Biomedical Engineering in 2014 | Documented only, 1 record |
 | `**` | No figures published, because of small graduate numbers or a low response rate | Explains the 105 excluded records |
 | `#` | Figures come from a follow-up survey of the previous year's graduates, after practical training (Law, Medicine, Pharmacy, Biomedical Sciences & Chinese Medicine); for Architecture, graduates three years earlier | `flag_followup_survey`, 76 records |
@@ -147,7 +163,7 @@ them, which is only on the dataset page. It is transcribed into `FOOTNOTE_LEGEND
 | `###` | SUTD Architecture and Sustainable Design, from a follow-up survey after practical training | `flag_followup_survey` |
 
 Without the legend these look like formatting. Removing them would lose a sample-size
-warning on 120 records and a cohort-timing warning on 76, so they are read in cleaning
+warning on 119 records and a cohort-timing warning on 76, so they are read in cleaning
 step 3, before any name cleaning touches them.
 
 Having them available made one useful check possible: all 105 suppressed records carry a
