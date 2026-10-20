@@ -1,0 +1,236 @@
+﻿"degree_key","degree","subject","field","is_honours","is_double_degree"
+1,"Bachelor of Arts (Architecture)","Architecture","Architecture & Built Environment",FALSE,FALSE
+2,"Bachelor of Science (Architecture and Sustainable Design)","Architecture and Sustainable Design","Architecture & Built Environment",FALSE,FALSE
+3,"Bachelor of Landscape Architecture","Landscape Architecture","Architecture & Built Environment",FALSE,FALSE
+4,"Bachelor of Science (Project and Facilities Management)","Project and Facilities Management","Architecture & Built Environment",FALSE,FALSE
+5,"Bachelor of Science (Real Estate)","Real Estate","Architecture & Built Environment",FALSE,FALSE
+6,"Bachelor of Arts","Arts","Arts, Humanities & Social Sciences",FALSE,FALSE
+7,"Bachelor of Arts (Hons)","Arts","Arts, Humanities & Social Sciences",TRUE,FALSE
+8,"Biological Sciences and Psychology","Biological Sciences and Psychology","Arts, Humanities & Social Sciences",FALSE,FALSE
+9,"Bachelor of Arts (Hons) in Chinese","Chinese","Arts, Humanities & Social Sciences",TRUE,FALSE
+10,"Chinese","Chinese","Arts, Humanities & Social Sciences",FALSE,FALSE
+11,"Bachelor of Communication Studies (Hons)","Communication Studies","Arts, Humanities & Social Sciences",TRUE,FALSE
+12,"Communication Studies","Communication Studies","Arts, Humanities & Social Sciences",FALSE,FALSE
+13,"Bachelor of Arts (Hons) in Criminology and Security","Criminology and Security","Arts, Humanities & Social Sciences",TRUE,FALSE
+14,"Bachelor of Arts (Hons) in English","English","Arts, Humanities & Social Sciences",TRUE,FALSE
+15,"English","English","Arts, Humanities & Social Sciences",FALSE,FALSE
+16,"Bachelor of Environmental Studies","Environmental Studies","Arts, Humanities & Social Sciences",FALSE,FALSE
+17,"Bachelor of Arts (Hons) in History","History","Arts, Humanities & Social Sciences",TRUE,FALSE
+18,"History","History","Arts, Humanities & Social Sciences",FALSE,FALSE
+19,"Bachelor of Arts (Hons) in Linguistics and Multilingual Studies","Linguistics and Multilingual Studies","Arts, Humanities & Social Sciences",TRUE,FALSE
+20,"Linguistics and Multilingual Studies","Linguistics and Multilingual Studies","Arts, Humanities & Social Sciences",FALSE,FALSE
+21,"Bachelor of Music","Music","Arts, Humanities & Social Sciences",FALSE,FALSE
+22,"Philosophy","Philosophy","Arts, Humanities & Social Sciences",FALSE,FALSE
+23,"Bachelor of Arts (Hons) in Psychology","Psychology","Arts, Humanities & Social Sciences",TRUE,FALSE
+24,"Psychology","Psychology","Arts, Humanities & Social Sciences",FALSE,FALSE
+25,"Bachelor of Arts (Hons) in Public Policy and Global Affairs","Public Policy and Global Affairs","Arts, Humanities & Social Sciences",TRUE,FALSE
+26,"Public Policy and Global Affairs","Public Policy and Global Affairs","Arts, Humanities & Social Sciences",FALSE,FALSE
+27,"Bachelor of Public Safety and Security","Public Safety and Security","Arts, Humanities & Social Sciences",FALSE,FALSE
+28,"School of Public Safety and Security","School of Public Safety and Security","Arts, Humanities & Social Sciences",FALSE,FALSE
+29,"Bachelor of Social Sciences","Social Sciences","Arts, Humanities & Social Sciences",FALSE,FALSE
+30,"Social Sciences","Social Sciences","Arts, Humanities & Social Sciences",FALSE,FALSE
+31,"Social Sciences (4-year)","Social Sciences (4-year)","Arts, Humanities & Social Sciences",FALSE,FALSE
+32,"Bachelor of Social Work","Social Work","Arts, Humanities & Social Sciences",FALSE,FALSE
+33,"Bachelor of Arts (Hons) in Sociology","Sociology","Arts, Humanities & Social Sciences",TRUE,FALSE
+34,"Sociology","Sociology","Arts, Humanities & Social Sciences",FALSE,FALSE
+35,"Business (3-year direct Honours)","3-year direct Honours","Business & Management",TRUE,FALSE
+36,"Accountancy","Accountancy","Business & Management",FALSE,FALSE
+37,"Bachelor of Accountancy","Accountancy","Business & Management",FALSE,FALSE
+38,"Bachelor of Accountancy (Hons)","Accountancy","Business & Management",TRUE,FALSE
+39,"Bachelor of Business Administration (Accountancy)","Accountancy","Business & Management",FALSE,FALSE
+40,"Bachelor of Business Administration (Accountancy) (Hons)","Accountancy","Business & Management",TRUE,FALSE
+41,"Accountancy (3-year direct Honours)","Accountancy (3-year direct Honours)","Business & Management",TRUE,FALSE
+42,"Accountancy (4-year)","Accountancy (4-year)","Business & Management",FALSE,FALSE
+43,"Accountancy and Business","Accountancy and Business","Business & Management",FALSE,FALSE
+44,"Double Degree in Bachelor of Accountancy (Hons) and Bachelor of Business (Hons)","Accountancy and Business","Business & Management",TRUE,TRUE
+45,"Bachelor of Science (Air Transport Management)","Air Transport Management","Business & Management",FALSE,FALSE
+46,"Bachelor of Science (Hons) in Air Transport Management","Air Transport Management","Business & Management",TRUE,FALSE
+47,"Bachelor of Business (Hons)","Business","Business & Management",TRUE,FALSE
+48,"Bachelor of Business Administration","Business Administration","Business & Management",FALSE,FALSE
+49,"Bachelor of Business Administration (Hons)","Business Administration","Business & Management",TRUE,FALSE
+50,"Business Management","Business Management","Business & Management",FALSE,FALSE
+51,"Business Management (4-year)","Business Management (4-year)","Business & Management",FALSE,FALSE
+52,"Bachelor of Professional Studies in Culinary Arts Management","Culinary Arts Management","Business & Management",FALSE,FALSE
+53,"Bachelor of Science in Finance","Finance","Business & Management",FALSE,FALSE
+54,"Bachelor of Business Administration in Food Business Management","Food Business Management","Business & Management",FALSE,FALSE
+55,"Bachelor of Hospitality Business (Hons)","Hospitality Business","Business & Management",TRUE,FALSE
+56,"Bachelor of Science (Major in Hospitality Management)","Hospitality Management","Business & Management",FALSE,FALSE
+57,"Bachelor of Human Resource Management","Human Resource Management","Business & Management",FALSE,FALSE
+58,"Bachelor of Science (Hons) (Maritime Studies)","Maritime Studies","Business & Management",TRUE,FALSE
+59,"Maritime Studies","Maritime Studies","Business & Management",FALSE,FALSE
+60,"Bachelor of Science in Marketing","Marketing","Business & Management",FALSE,FALSE
+61,"Bachelor of Science (Hons) (Sport Science and Management)","Sport Science and Management","Business & Management",TRUE,FALSE
+62,"Sport Science and Management","Sport Science and Management","Business & Management",FALSE,FALSE
+63,"Sports Science and Management","Sports Science and Management","Business & Management",FALSE,FALSE
+64,"Bachelor of Science in Supply Chain Management","Supply Chain Management","Business & Management",FALSE,FALSE
+65,"Bachelor of Science (Business Analytics)","Business Analytics","Computing & IT",FALSE,FALSE
+66,"Bachelor of Science in Business Analytics","Business Analytics","Computing & IT",FALSE,FALSE
+67,"Double Degree in Business and Computer Engineering / Computing","Business and Computer Engineering / Computing","Computing & IT",FALSE,TRUE
+68,"Business and Computing","Business and Computing","Computing & IT",FALSE,FALSE
+69,"Double Degree in Bachelor of Business (Hons) and Bachelor of Engineering (Hons) (Computer Science)","Business and Engineering (Computer Science)","Computing & IT",TRUE,TRUE
+70,"Bachelor of Computing (Communications and Media)","Communications and Media","Computing & IT",FALSE,FALSE
+71,"Bachelor of Science (Computational Biology)","Computational Biology","Computing & IT",FALSE,FALSE
+72,"Bachelor of Engineering (Computer Engineering)","Computer Engineering","Computing & IT",FALSE,FALSE
+73,"Bachelor of Engineering (Hons) (Computer Engineering)","Computer Engineering","Computing & IT",TRUE,FALSE
+74,"Bachelor of Engineering (Hons) in Computer Engineering","Computer Engineering","Computing & IT",TRUE,FALSE
+75,"Computer Engineering","Computer Engineering","Computing & IT",FALSE,FALSE
+76,"Bachelor of Computing (Computer Science)","Computer Science","Computing & IT",FALSE,FALSE
+77,"Bachelor of Engineering (Hons) (Computer Science)","Computer Science","Computing & IT",TRUE,FALSE
+78,"Computer Science","Computer Science","Computing & IT",FALSE,FALSE
+79,"Bachelor of Engineering (Computer Science and Design)","Computer Science and Design","Computing & IT",FALSE,FALSE
+80,"Bachelor of Science in Computer Science and Game Design","Computer Science and Game Design","Computing & IT",FALSE,FALSE
+81,"Bachelor of Science (Hons) in Computer Science in Interactive Media and Game Development","Computer Science in Interactive Media and Game Development","Computing & IT",TRUE,FALSE
+82,"Bachelor of Science (Hons) in Computer Science in Real-Time Interactive Simulation","Computer Science in Real-Time Interactive Simulation","Computing & IT",TRUE,FALSE
+83,"Bachelor of Science in Computer Science in Real-Time Interactive Simulation","Computer Science in Real-Time Interactive Simulation","Computing & IT",FALSE,FALSE
+84,"Bachelor of Science (Hons) in Computing Science","Computing Science","Computing & IT",TRUE,FALSE
+85,"Computing and Law","Computing and Law","Computing & IT",FALSE,FALSE
+86,"Bachelor of Science (Data Science and Analytics)","Data Science and Analytics","Computing & IT",FALSE,FALSE
+87,"Data Science and Artificial Intelligence","Data Science and Artificial Intelligence","Computing & IT",FALSE,FALSE
+88,"Bachelor of Computing (Electronic Commerce)","Electronic Commerce","Computing & IT",FALSE,FALSE
+89,"Bachelor of Computing (Information Security)","Information Security","Computing & IT",FALSE,FALSE
+90,"Bachelor of Computing (Information Systems)","Information Systems","Computing & IT",FALSE,FALSE
+91,"Information Systems","Information Systems","Computing & IT",FALSE,FALSE
+92,"Information Systems Management","Information Systems Management","Computing & IT",FALSE,FALSE
+93,"Information Systems Management (4-year)","Information Systems Management (4-year)","Computing & IT",FALSE,FALSE
+94,"Bachelor of Engineering (Information Systems Technology and Design)","Information Systems Technology and Design","Computing & IT",FALSE,FALSE
+95,"Bachelor of Engineering (Hons) in Information and Communications Technology (Information Security)","Information and Communications Technology (Information Security)","Computing & IT",TRUE,FALSE
+96,"Bachelor of Engineering (Hons) in Information and Communications Technology (Software Engineering)","Information and Communications Technology (Software Engineering)","Computing & IT",TRUE,FALSE
+97,"Bachelor of Engineering (Hons) in Information and Communications Technology majoring in Information Security","Information and Communications Technology majoring in Information Security","Computing & IT",TRUE,FALSE
+98,"Bachelor of Engineering (Hons) in Information and Communications Technology majoring in Software Engineering","Information and Communications Technology majoring in Software Engineering","Computing & IT",TRUE,FALSE
+99,"Art, Design and Media","Art, Design and Media","Design & Media",FALSE,FALSE
+100,"Bachelor of Arts (Hons) in Communication Design","Communication Design","Design & Media",TRUE,FALSE
+101,"Bachelor of Fine Arts in Digital Art and Animation","Digital Arts and Animation","Design & Media",FALSE,FALSE
+102,"Bachelor of Fine Arts in Digital Arts and Animation","Digital Arts and Animation","Design & Media",FALSE,FALSE
+103,"Bachelor of Science (Hons) in Digital Communications and Integrated Media","Digital Communications and Integrated Media","Design & Media",TRUE,FALSE
+104,"Bachelor of Fine Arts (Hons)","Fine Arts","Design & Media",TRUE,FALSE
+105,"Bachelor of Arts in Game Design","Game Design","Design & Media",FALSE,FALSE
+106,"Bachelor of Arts (Industrial Design)","Industrial Design","Design & Media",FALSE,FALSE
+107,"Bachelor of Arts (Hons) in Interior Design","Interior Design","Design & Media",TRUE,FALSE
+108,"Bachelor of Arts in User Experience and Game Design","User Experience and Game Design","Design & Media",FALSE,FALSE
+109,"Bachelor of Arts (Hons) in Economics","Economics","Economics",TRUE,FALSE
+110,"Economics","Economics","Economics",FALSE,FALSE
+111,"Economics (4-year)","Economics (4-year)","Economics",FALSE,FALSE
+112,"Mathematical Sciences / Mathematical Sciences and Economics","Mathematical Sciences / Mathematical Sciences and Economics","Economics",FALSE,FALSE
+113,"Bachelor of Science (Hons) in Mathematics and Economics","Mathematics and Economics","Economics",TRUE,FALSE
+114,"Mathematics and Economics","Mathematics and Economics","Economics",FALSE,FALSE
+115,"Bachelor of Early Childhood Education","Early Childhood Education","Education",FALSE,FALSE
+116,"Bachelor of Science in Early Childhood Education","Early Childhood Education","Education",FALSE,FALSE
+117,"Bachelor of Arts (Hons) (Education)","Education","Education",TRUE,FALSE
+118,"Bachelor of Science (Hons) (Education)","Education","Education",TRUE,FALSE
+119,"Arts (and Education)","and Education","Education",FALSE,FALSE
+120,"Science (and Education)","and Education","Education",FALSE,FALSE
+121,"Arts (with Education)","with Education","Education",FALSE,FALSE
+122,"Science (with Education)","with Education","Education",FALSE,FALSE
+123,"Bachelor of Engineering (Hons) in Aeronautical Engineering","Aeronautical Engineering","Engineering",TRUE,FALSE
+124,"Aerospace Engineering","Aerospace Engineering","Engineering",FALSE,FALSE
+125,"Bachelor of Engineering (Hons) (Aerospace Engineering)","Aerospace Engineering","Engineering",TRUE,FALSE
+126,"Bachelor of Engineering (Hons) in Aerospace Engineering","Aerospace Engineering","Engineering",TRUE,FALSE
+127,"Bachelor of Engineering (Hons) in Aerospace Systems","Aerospace Systems","Engineering",TRUE,FALSE
+128,"Bachelor of Engineering (Hons) in Aircraft Systems Engineering","Aircraft Systems Engineering","Engineering",TRUE,FALSE
+129,"Bachelor of Engineering (Bioengineering)","Bioengineering","Engineering",FALSE,FALSE
+130,"Bachelor of Engineering (Hons) (Bioengineering)","Bioengineering","Engineering",TRUE,FALSE
+131,"Bioengineering","Bioengineering","Engineering",FALSE,FALSE
+132,"Bachelor of Engineering (Biomedical Engineering)","Biomedical Engineering","Engineering",FALSE,FALSE
+133,"Bachelor of Engineering (Chemical Engineering)","Chemical Engineering","Engineering",FALSE,FALSE
+134,"Bachelor of Engineering (Hons) in Chemical Engineering","Chemical Engineering","Engineering",TRUE,FALSE
+135,"Bachelor of Science in Chemical Engineering","Chemical Engineering","Engineering",FALSE,FALSE
+136,"Bachelor of Engineering (Hons) (Chemical and Biomolecular Engineering)","Chemical and Biomolecular Engineering","Engineering",TRUE,FALSE
+137,"Chemical and Biomolecular Engineering","Chemical and Biomolecular Engineering","Engineering",FALSE,FALSE
+138,"Bachelor of Engineering (Civil Engineering)","Civil Engineering","Engineering",FALSE,FALSE
+139,"Bachelor of Engineering (Hons) (Civil Engineering)","Civil Engineering","Engineering",TRUE,FALSE
+140,"Bachelor of Engineering (Hons) in Civil Engineering","Civil Engineering","Engineering",TRUE,FALSE
+141,"Civil Engineering","Civil Engineering","Engineering",FALSE,FALSE
+142,"Bachelor of Engineering (Electrical Engineering)","Electrical Engineering","Engineering",FALSE,FALSE
+143,"Bachelor of Science in Electrical Engineering and Information Technology","Electrical Engineering and Information Technology","Engineering",FALSE,FALSE
+144,"Bachelor of Engineering (Hons) in Electrical Power Engineering","Electrical Power Engineering","Engineering",TRUE,FALSE
+145,"Bachelor of Engineering (Hons) (Electrical and Electronic Engineering)","Electrical and Electronic Engineering","Engineering",TRUE,FALSE
+146,"Electrical and Electronic Engineering","Electrical and Electronic Engineering","Engineering",FALSE,FALSE
+147,"Bachelor of Engineering (Hons) in Electronics and Data Engineering","Electronics and Data Engineering","Engineering",TRUE,FALSE
+148,"Bachelor of Engineering (Engineering Product Development)","Engineering Product Development","Engineering",FALSE,FALSE
+149,"Bachelor of Engineering (Engineering Science)","Engineering Science","Engineering",FALSE,FALSE
+150,"Bachelor of Engineering (Engineering Systems and Design)","Engineering Systems and Design","Engineering",FALSE,FALSE
+151,"Double Degree in Engineering and Economics","Engineering and Economics","Engineering",FALSE,TRUE
+152,"Bachelor of Engineering (Environmental Engineering)","Environmental Engineering","Engineering",FALSE,FALSE
+153,"Bachelor of Engineering (Hons) (Environmental Engineering)","Environmental Engineering","Engineering",TRUE,FALSE
+154,"Environmental Engineering","Environmental Engineering","Engineering",FALSE,FALSE
+155,"Bachelor of Engineering (Industrial and Systems Engineering)","Industrial and Systems Engineering","Engineering",FALSE,FALSE
+156,"Bachelor of Engineering (Hons) (Information Engineering and Media)","Information Engineering and Media","Engineering",TRUE,FALSE
+157,"Information Engineering and Media","Information Engineering and Media","Engineering",FALSE,FALSE
+158,"Bachelor of Engineering (Hons) in Marine Engineering","Marine Engineering","Engineering",TRUE,FALSE
+159,"Bachelor of Engineering (Hons) (Materials Engineering)","Materials Engineering","Engineering",TRUE,FALSE
+160,"Materials Engineering","Materials Engineering","Engineering",FALSE,FALSE
+161,"Bachelor of Engineering (Materials Science and Engineering)","Materials Science and Engineering","Engineering",FALSE,FALSE
+162,"Bachelor of Engineering (Hons) in Mechanical Design Engineering","Mechanical Design Engineering","Engineering",TRUE,FALSE
+163,"Bachelor of Engineering (Hons) in Mechanical Design and Manufacturing Engineering","Mechanical Design and Manufacturing Engineering","Engineering",TRUE,FALSE
+164,"Bachelor of Engineering (Hons) (Mechanical Engineering)","Mechanical Engineering","Engineering",TRUE,FALSE
+165,"Bachelor of Engineering (Hons) in Mechanical Engineering","Mechanical Engineering","Engineering",TRUE,FALSE
+166,"Bachelor of Engineering (Mechanical Engineering)","Mechanical Engineering","Engineering",FALSE,FALSE
+167,"Mechanical Engineering","Mechanical Engineering","Engineering",FALSE,FALSE
+168,"Bachelor of Engineering (Hons) in Mechatronics","Mechatronics","Engineering",TRUE,FALSE
+169,"Bachelor of Engineering (Hons) in Naval Architecture","Naval Architecture","Engineering",TRUE,FALSE
+170,"Bachelor of Engineering (Hons) in Offshore Engineering","Offshore Engineering","Engineering",TRUE,FALSE
+171,"Bachelor of Engineering (Hons) in Sustainable Infrastructure (Land)","Sustainable Infrastructure (Land)","Engineering",TRUE,FALSE
+172,"Bachelor of Engineering (Hons) in Sustainable Infrastructure Engineering (Building Services)","Sustainable Infrastructure Engineering (Building Services)","Engineering",TRUE,FALSE
+173,"Bachelor of Engineering (Hons) in Sustainable Infrastructure Engineering (Land)","Sustainable Infrastructure Engineering (Land)","Engineering",TRUE,FALSE
+174,"Bachelor of Engineering (Hons) in Systems Engineering (ElectroMechanical Systems)","Systems Engineering (ElectroMechanical Systems)","Engineering",TRUE,FALSE
+175,"Bachelor of Engineering (Hons) in Systems Engineering (Electromechanical Systems)","Systems Engineering (ElectroMechanical Systems)","Engineering",TRUE,FALSE
+176,"Bachelor of Engineering in Systems Engineering (ElectroMechanical Systems)","Systems Engineering (ElectroMechanical Systems)","Engineering",FALSE,FALSE
+177,"Bachelor of Engineering (Hons) in Telematics (Intelligent Transportation Systems Engineering)","Telematics (Intelligent Transportation Systems Engineering)","Engineering",TRUE,FALSE
+178,"Bachelor in Science (Diagnostic Radiography)","Diagnostic Radiography","Health Sciences",FALSE,FALSE
+179,"Bachelor of Science (Diagnostic Radiography)","Diagnostic Radiography","Health Sciences",FALSE,FALSE
+180,"Bachelor of Science (Hons) in Diagnostic Radiography","Diagnostic Radiography","Health Sciences",TRUE,FALSE
+181,"Bachelor of Science (Hons) in Dietetics and Nutrition","Dietetics and Nutrition","Health Sciences",TRUE,FALSE
+182,"Bachelor of Science (Hons) in Food and Human Nutrition","Food and Human Nutrition","Health Sciences",TRUE,FALSE
+183,"Bachelor of Science (Hons) in Nursing","Nursing","Health Sciences",TRUE,FALSE
+184,"Bachelor of Science (Nursing)","Nursing","Health Sciences",FALSE,FALSE
+185,"Bachelor of Science (Nursing) (Hons)","Nursing","Health Sciences",TRUE,FALSE
+186,"Bachelor of Science (Hons) in Nursing Practice","Nursing Practice","Health Sciences",TRUE,FALSE
+187,"Bachelor in Science (Occupational Therapy)","Occupational Therapy","Health Sciences",FALSE,FALSE
+188,"Bachelor of Science (Hons) in Occupational Therapy","Occupational Therapy","Health Sciences",TRUE,FALSE
+189,"Bachelor of Science (Occupational Therapy)","Occupational Therapy","Health Sciences",FALSE,FALSE
+190,"Bachelor of Engineering (Hons) in Pharmaceutical Engineering","Pharmaceutical Engineering","Health Sciences",TRUE,FALSE
+191,"Bachelor of Science (Pharmaceutical Science) (Hons)","Pharmaceutical Science","Health Sciences",TRUE,FALSE
+192,"Bachelor of Science (Pharmacy)","Pharmacy","Health Sciences",FALSE,FALSE
+193,"Bachelor of Science (Pharmacy) (Hons)","Pharmacy","Health Sciences",TRUE,FALSE
+194,"Bachelor in Science (Physiotherapy)","Physiotherapy","Health Sciences",FALSE,FALSE
+195,"Bachelor of Science (Hons) in Physiotherapy","Physiotherapy","Health Sciences",TRUE,FALSE
+196,"Bachelor of Science (Physiotherapy)","Physiotherapy","Health Sciences",FALSE,FALSE
+197,"Bachelor in Science (Radiation Therapy)","Radiation Therapy","Health Sciences",FALSE,FALSE
+198,"Bachelor of Science (Hons) in Radiation Therapy","Radiation Therapy","Health Sciences",TRUE,FALSE
+199,"Bachelor of Science (Radiation Therapy)","Radiation Therapy","Health Sciences",FALSE,FALSE
+200,"Bachelor of Science (Hons) in Speech and Language Therapy","Speech and Language Therapy","Health Sciences",TRUE,FALSE
+201,"Inter-Disciplinary Double Major","Interdisciplinary Double Major","Interdisciplinary",FALSE,TRUE
+202,"Interdisciplinary Double Major","Interdisciplinary Double Major","Interdisciplinary",FALSE,TRUE
+203,"Bachelor of Laws","Law","Law",FALSE,FALSE
+204,"Bachelor of Laws (L.L.B) (Hons)","Law","Law",TRUE,FALSE
+205,"Bachelor of Laws (LLB) (Hons)","Law","Law",TRUE,FALSE
+206,"Law","Law","Law",FALSE,FALSE
+207,"Law (4-year)","Law (4-year)","Law",FALSE,FALSE
+208,"Biomedical Science (Traditional Chinese Medicine)","Biomedical Sciences (Traditional Chinese Medicine)","Medicine & Dentistry",FALSE,FALSE
+209,"Biomedical Sciences (Traditional Chinese Medicine)","Biomedical Sciences (Traditional Chinese Medicine)","Medicine & Dentistry",FALSE,FALSE
+210,"Biomedical Sciences and Chinese Medicine","Biomedical Sciences and Chinese Medicine","Medicine & Dentistry",FALSE,FALSE
+211,"Double Degree in Bachelor of Science (Hons) in Biomedical Sciences and Bachelor of Medicine (Chinese Medicine)","Biomedical Sciences and Medicine (Chinese Medicine)","Medicine & Dentistry",TRUE,TRUE
+212,"Bachelor of Dental Surgery","Dental Surgery","Medicine & Dentistry",FALSE,FALSE
+213,"Medicine","Medicine","Medicine & Dentistry",FALSE,FALSE
+214,"Bachelor of Medicine and Bachelor of Surgery","Medicine and Surgery","Medicine & Dentistry",FALSE,FALSE
+215,"Bachelor of Medicine and Bachelor of Surgery (MBBS)","Medicine and Surgery (MBBS)","Medicine & Dentistry",FALSE,FALSE
+216,"Bachelor of Applied Science (Hons)","Applied Science","Science",TRUE,FALSE
+217,"Bachelor of Science (Hons) in Biological Sciences","Biological Sciences","Science",TRUE,FALSE
+218,"Biological Sciences","Biological Sciences","Science",FALSE,FALSE
+219,"Biological Sciences / Biomedical Sciences","Biological Sciences / Biomedical Sciences","Science",FALSE,FALSE
+220,"Biological and Biomedical Sciences","Biological and Biomedical Sciences","Science",FALSE,FALSE
+221,"Bachelor of Science (Hons) in Chemistry and Biological Chemistry","Chemistry and Biological Chemistry","Science",TRUE,FALSE
+222,"Chemistry and Biological Chemistry","Chemistry and Biological Chemistry","Science",FALSE,FALSE
+223,"Environmental Earth Systems Science","Environmental Earth Systems Sciences","Science",FALSE,FALSE
+224,"Environmental Earth Systems Sciences","Environmental Earth Systems Sciences","Science",FALSE,FALSE
+225,"Bachelor of Food Technology (Hons)","Food Technology","Science",TRUE,FALSE
+226,"Bachelor of Science (Hons) in Mathematical Sciences","Mathematical Sciences","Science",TRUE,FALSE
+227,"Mathematical Science","Mathematical Sciences","Science",FALSE,FALSE
+228,"Mathematical Sciences","Mathematical Sciences","Science",FALSE,FALSE
+229,"Mathematics and Mathematical Sciences","Mathematics and Mathematical Sciences","Science",FALSE,FALSE
+230,"Bachelor of Science (Hons) in Physics / Applied Physics","Physics / Applied Physics","Science",TRUE,FALSE
+231,"Physics / Applied Physics","Physics / Applied Physics","Science",FALSE,FALSE
+232,"Physics and Applied Physics","Physics and Applied Physics","Science",FALSE,FALSE
+233,"Physics and Applied Physics / Physics and Mathematical Sciences","Physics and Applied Physics / Physics and Mathematical Sciences","Science",FALSE,FALSE
+234,"Bachelor of Science","Science","Science",FALSE,FALSE
+235,"Bachelor of Science (Hons)","Science","Science",TRUE,FALSE
