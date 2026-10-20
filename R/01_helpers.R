@@ -1,53 +1,47 @@
 # ==============================================================================
-# 01_helpers.R  --  Reusable cleaning and validation functions
+# 01_helpers.R  --  Cleaning and validation functions
 # ==============================================================================
-# PURPOSE
-#   Each cleaning decision is expressed once, as a named function, so that the
-#   cleaning script below reads as a sequence of intentions rather than a wall
-#   of in-line string surgery. Every function is pure: it takes a vector or a
-#   data frame and returns a new one, never modifying the raw input.
+# One named function per cleaning decision, so 02_clean.R reads as a list of
+# steps instead of a wall of string handling. Each function takes a vector or a
+# data frame and returns a new one; nothing modifies its input.
 # ==============================================================================
 
 # ---- Encoding ----------------------------------------------------------------
-#' Repair text that was double-encoded on export from data.gov.sg
+#' Repair text that was double-encoded on export
 #'
-#' Non-ASCII names ("Technische Universitaet Muenchen") were written out as
-#' UTF-8, read back as Latin-1 and re-encoded, leaving the byte sequence
-#' C3 83 C2 A4 where C3 A4 was intended. Reversing the second encoding pass
-#' restores the correct characters so partner-institution names display
-#' properly on axis labels and in slicers.
-#' Characters that were lost outright on export survive only as the Unicode
-#' replacement character; those stood in for an en dash and are restored as
-#' a plain hyphen.
+#' Names with accents ("Technische Universitaet Muenchen") were written as
+#' UTF-8, read back as Latin-1 and encoded again, so the file holds the bytes
+#' C3 83 C2 A4 where C3 A4 was meant. Undoing the second pass restores the
+#' characters, which matters because these names appear on axis labels and in
+#' slicers.
 repair_encoding <- function(x) {
   recoded <- iconv(x, from = "UTF-8", to = "latin1")
-  # iconv returns NA for any string with no Latin-1 representation; in that
-  # case the original text is already correct and is kept unchanged.
+  # iconv gives NA for a string with no Latin-1 form. Those are already correct,
+  # so keep the original.
   out <- ifelse(is.na(recoded), x, recoded)
   Encoding(out) <- "UTF-8"
-  # The Unicode replacement character stands where an en dash was lost outright
-  # on export. It is substituted only after the repair pass above, because it
-  # was itself double-encoded and is unrecognisable until that pass is undone.
-  str_replace_all(out, "\uFFFD", "-")
+  # Some characters were lost on export and survive only as the Unicode
+  # replacement character, standing in for an en dash. Replaced after the pass
+  # above, because it was double-encoded too and is not recognisable until then.
+  str_replace_all(out, "�", "-")
 }
 
 # ---- Missing values ----------------------------------------------------------
-#' Convert every spelling of "not available" to a true NA
+#' Turn every spelling of "not available" into NA
 #'
-#' Missing income and employment figures are coded as "na" in some survey years
-#' and "N.A." in others. Left as text they silently force whole columns to
-#' character, which is why all eight measures import as text. Normalising them
-#' to NA first lets the columns be typed as numbers.
+#' Missing figures are written "na" in some years and "N.A." in others. As text
+#' they force the whole column to character, which is why all eight measures
+#' import as text. Converting them to NA first lets the columns be typed.
 blank_na_tokens <- function(x) {
   x <- str_squish(x)
   if_else(str_to_lower(x) %in% NA_TOKENS, NA_character_, x)
 }
 
-#' Coerce a measure column to numeric after the NA tokens have been removed
+#' Convert a measure column to numeric once the NA tokens are gone
 #'
-#' Thousands separators and stray percent signs are stripped first so that no
-#' legitimate value is lost to coercion. Any value that still fails to parse is
-#' reported rather than silently discarded.
+#' Strips thousands separators and stray percent signs first so no real value
+#' is lost. Anything that still fails to parse is reported rather than dropped
+#' quietly.
 as_measure <- function(x, col_name = "column") {
   cleaned  <- str_remove_all(x, "[,%\\s$]")
   numeric  <- suppressWarnings(as.numeric(cleaned))
@@ -59,14 +53,25 @@ as_measure <- function(x, col_name = "column") {
   numeric
 }
 
-# ---- Text canonicalisation ---------------------------------------------------
-#' Strip the footnote apparatus that MOE attaches to programme names
+# ---- Text tidying ------------------------------------------------------------
+#' Read the footnote markers off the end of a programme name
 #'
-#' Survey tables mark programmes with symbols (*, #, ^, **, ###) and occasional
-#' footnote digits that refer to notes printed beneath the original table. These
-#' carry no information once the table is separated from its notes, but they
-#' split one programme into several distinct labels, which would fragment every
-#' filter and chart in the dashboard.
+#' Has to run before strip_footnotes(), which removes them. FOOTNOTE_LEGEND
+#' gives their meanings; two of them are warnings about how the figure was
+#' produced, so they are kept as flags. Returns "" rather than NA when there is
+#' no marker, so str_detect() on the result does not produce missing values.
+read_footnote_markers <- function(x) {
+  x |>
+    str_extract("[*#^~†‡\\s]+$") |>
+    str_remove_all("\\s") |>
+    replace_na("")
+}
+
+#' Remove the footnote symbols and digits from a programme name
+#'
+#' The symbols split one programme into several different labels, which would
+#' fragment every filter and chart. Safe to remove here because
+#' read_footnote_markers() has already captured what they mean.
 strip_footnotes <- function(x) {
   x |>
     str_remove_all("[*#^~†‡]") |>
@@ -78,8 +83,8 @@ strip_footnotes <- function(x) {
 #'
 #' The same programme appears as "Chemical and Biomolecular Engineering",
 #' "Chemical And Biomolecular Engineering" and "Chemical & Biomolecular
-#' Engineering" across years. Collapsing these spelling variants is what allows
-#' a single programme to be tracked as one line on a trend chart.
+#' Engineering" in different years. Collapsing those lets one programme be a
+#' single line on a trend chart.
 canonicalise_text <- function(x) {
   x |>
     str_replace_all("&", "and") |>
@@ -94,9 +99,9 @@ canonicalise_text <- function(x) {
     str_squish()
 }
 
-#' Collapse the programme-length wording used inconsistently by SMU
+#' Collapse SMU's inconsistent programme-length wording
 #'
-#' "(4-year programme)" and "(4-years programme)" denote the same programme.
+#' "(4-year programme)" and "(4-years programme)" are the same programme.
 normalise_programme_length <- function(x) {
   x |>
     str_replace_all(regex("\\(4-years? programme\\)", ignore_case = TRUE), "(4-year)") |>
@@ -104,11 +109,11 @@ normalise_programme_length <- function(x) {
     str_squish()
 }
 
-#' Collapse the many ways an honours award is written into one marker
+#' Write honours awards one consistent way
 #'
-#' "(Hons)", "(Hons.)", "with Honours" and "with Honours in X" all denote an
-#' honours degree. Normalising the wording keeps a programme's honours and
-#' non-honours records from appearing as two unrelated programmes.
+#' "(Hons)", "(Hons.)", "with Honours" and "with Honours in X" all mean an
+#' honours degree. Without this a programme's honours and non-honours records
+#' look like two unrelated programmes.
 normalise_honours <- function(x) {
   x |>
     str_replace_all(regex("\\(\\s*hons\\.?\\s*\\)", ignore_case = TRUE), "(Hons)") |>
@@ -118,13 +123,12 @@ normalise_honours <- function(x) {
 }
 
 # ---- Classification ----------------------------------------------------------
-#' Assign each degree title to one broad field of study
+#' Assign a degree title to one field of study
 #'
-#' Applies FIELD_RULES in order and takes the first match, so that the
-#' precedence decisions documented in 00_setup.R are applied consistently.
-#' Implemented as a single vectorised pass over the rule table rather than a
-#' row-wise loop, so cost grows with the number of rules (14) and not with the
-#' number of records.
+#' Tests FIELD_RULES in order and takes the first match, so the ordering set
+#' out in 00_setup.R is applied consistently. Written as one vectorised pass
+#' over the 14 rules rather than a loop over records, so the cost depends on
+#' the number of rules and not the number of rows.
 classify_field <- function(x) {
   key   <- str_to_lower(x)
   field <- rep(NA_character_, length(key))
@@ -137,7 +141,7 @@ classify_field <- function(x) {
   replace_na(field, "Other")
 }
 
-#' Label each survey year with its labour-market era
+#' Label a survey year with its era
 assign_era <- function(year) {
   idx <- map_int(year, function(y) {
     m <- which(y >= ERA_BREAKS$year_from & y <= ERA_BREAKS$year_to)
@@ -147,31 +151,64 @@ assign_era <- function(year) {
 }
 
 # ---- Validation --------------------------------------------------------------
-#' Assert a condition about the data and stop the pipeline if it fails
+#' Test an assumption about the data and stop the run if it fails
 #'
-#' Cleaning is only trustworthy if its assumptions are tested, so each
-#' structural expectation is checked explicitly and the run aborts on breach
-#' rather than exporting a quietly wrong table to Power BI.
+#' Cleaning can only be trusted if its assumptions are tested, so each one is
+#' stated here and the run stops rather than writing a wrong table to
+#' data/clean/.
+#'
+#' Two cases where a check can look like it passed without testing anything:
+#'
+#'   1. The condition contains NA. Comparing with a missing value gives NA, not
+#'      FALSE, so counting with na.rm = TRUE would skip those records and report
+#'      success. An NA here means the check could not be evaluated, so it fails.
+#'      A check that has to cope with missing data should say so, as
+#'      is.na(x) | <test on x>.
+#'   2. The condition is empty because the thing being checked had no rows.
+#'      That can be legitimate, so it does not fail, but the message says so.
+#'
+#' The count of values tested is printed on every line, so the run log shows
+#' how much each check actually covered.
 check_that <- function(condition, description, offenders = NULL) {
-  n_bad <- sum(!condition, na.rm = TRUE)
-  if (n_bad > 0) {
-    msg <- paste0("VALIDATION FAILED: ", description, " (", n_bad, " record(s))")
-    if (!is.null(offenders)) {
-      msg <- paste0(msg, "\n", paste(utils::capture.output(print(utils::head(offenders, 5))),
-                                     collapse = "\n"))
-    }
-    stop(msg, call. = FALSE)
+  n_total <- length(condition)
+  n_na    <- sum(is.na(condition))
+  n_bad   <- sum(!condition, na.rm = TRUE)
+
+  report_offenders <- function(msg) {
+    if (is.null(offenders)) return(msg)
+    paste0(msg, "\n",
+           paste(utils::capture.output(print(utils::head(offenders, 5))),
+                 collapse = "\n"))
   }
-  message("  [ok] ", description)
+
+  if (n_na > 0) {
+    stop(report_offenders(paste0(
+      "VALIDATION NOT EVALUABLE: ", description, " -- ", n_na, " of ", n_total,
+      " value(s) came out as NA, so the check could not test them. ",
+      "Rewrite the condition to handle missing values, ",
+      "e.g. is.na(x) | <test on x>.")), call. = FALSE)
+  }
+
+  if (n_bad > 0) {
+    stop(report_offenders(paste0(
+      "VALIDATION FAILED: ", description, " (", n_bad, " of ", n_total,
+      " record(s))")), call. = FALSE)
+  }
+
+  if (n_total == 0) {
+    message("  [ok, nothing to test] ", description)
+  } else {
+    message("  [ok, ", n_total, " tested] ", description)
+  }
   invisible(TRUE)
 }
 
 # ---- Audit trail -------------------------------------------------------------
-#' Record the row count after a cleaning step
+#' Record the row count after a step
 #'
-#' The resulting log is exported with the cleaned data so that the row counts
-#' quoted in the report are generated by the pipeline rather than transcribed
-#' by hand, and so a reader can see exactly what each step removed.
+#' The log is exported with the cleaned data, so the row counts quoted in the
+#' report come from the pipeline rather than being copied out by hand, and a
+#' reader can see what each step removed.
 new_log <- function() tibble(step = character(), action = character(),
                              rows = integer(), removed = integer())
 
@@ -183,15 +220,15 @@ log_step <- function(log, step, action, rows) {
 }
 
 # ---- Partner institutions ----------------------------------------------------
-#' Reduce SIT's partner-institution labels to the institution itself
+#' Reduce SIT's partner labels to the awarding institution
 #'
-#' SIT awards both its own degrees and degrees conferred by overseas partners,
-#' and names the partner inconsistently across years: "Newcastle University",
-#' "SIT-Newcastle University" and "SIT- Newcastle University" are one partner,
-#' while joint awards appear as compounds such as "SIT / SIT-Trinity College
-#' Dublin / Trinity College Dublin". Dropping the redundant SIT prefix and
-#' de-duplicating the compounds leaves one label per awarding institution, so
-#' SIT's partner programmes can be compared with its in-house programmes.
+#' SIT awards its own degrees and degrees conferred by overseas partners, and
+#' names the partners inconsistently: "Newcastle University",
+#' "SIT-Newcastle University" and "SIT- Newcastle University" are one partner.
+#' Joint awards appear as compounds like "SIT / SIT-Trinity College Dublin /
+#' Trinity College Dublin". Removing the SIT prefix and de-duplicating leaves
+#' one label per institution, so SIT's partner and in-house programmes can be
+#' compared.
 normalise_partner_institution <- function(x) {
   sit_prefix <- "^\\s*(SIT|Singapore Institute of Technology)\\s*[-]\\s*"
   sit_alone  <- "^\\s*(SIT|Singapore Institute of Technology( \\(SIT\\))?)\\s*$"
@@ -208,50 +245,62 @@ normalise_partner_institution <- function(x) {
 }
 
 # ---- Chart labels ------------------------------------------------------------
-#' Reduce a full award title to the subject it is awarded in
+#' Reduce a full award title to its subject
 #'
-#' NUS, SIT and SUTD report the full award ("Bachelor of Engineering (Hons) in
-#' Mechanical Engineering") while NTU and SMU report only the subject
-#' ("Mechanical Engineering"). Full titles run to eighty characters and are
-#' unreadable on a category axis, and the inconsistency makes the same subject
-#' look like two different programmes when universities are compared side by
-#' side. Reducing every title to its subject gives one short, comparable label
-#' for charts, while the full title is retained for drill-down and tooltips.
+#' NUS, SIT and SUTD publish the full award ("Bachelor of Engineering (Hons) in
+#' Mechanical Engineering") while NTU and SMU publish only the subject
+#' ("Mechanical Engineering"). Full titles reach eighty characters and cannot be
+#' read on a category axis, and the inconsistency makes one subject look like
+#' two programmes when universities are compared. The full title is kept for
+#' drill-down and tooltips.
 shorten_degree <- function(x) {
-  # Award names that act as a wrapper around the real subject, e.g. the
-  # "Science" in "Bachelor of Science in Nursing". Where the award name IS the
-  # subject ("Bachelor of Accountancy") nothing is stripped.
+  # Award names that wrap the real subject, e.g. the "Science" in "Bachelor of
+  # Science in Nursing". Where the award name is itself the subject ("Bachelor
+  # of Accountancy") nothing is removed.
   wrapper <- paste("Science", "Arts", "Fine Arts", "Engineering", "Business",
                    "Business Administration", "Computing", "Applied Science",
                    "Professional Studies", sep = "|")
 
   x |>
-    # Honours wording is removed first and carried by its own flag; left in
-    # place it sits between the award and the subject and blocks the patterns
-    # below from matching.
+    # Honours wording comes out first and is carried by its own flag. Left in,
+    # it sits between the award and the subject and blocks the patterns below.
     str_remove_all(regex("\\s*\\(hons\\)", ignore_case = TRUE)) |>
+    # Programme length is not a subject. "Business (3-year direct Honours)" and
+    # "Business" are the same subject over a different number of years, and the
+    # full degree title still records the difference.
+    str_remove(regex("\\s*\\([0-9]+-year[^)]*\\)", ignore_case = TRUE)) |>
     str_remove(regex("^double degree in\\s+", ignore_case = TRUE)) |>
     str_remove_all(regex("\\bbachelor (of|in)\\s+", ignore_case = TRUE)) |>
-    # "Science in Nursing" -> "Nursing"; anchored so that a subject which itself
-    # contains an award word ("Computer Science in Real-Time Interactive
-    # Simulation") is left intact.
+    # "Science in Nursing" -> "Nursing". Anchored, so a subject that contains an
+    # award word itself ("Computer Science in Real-Time Interactive Simulation")
+    # is left alone.
     str_remove(regex(paste0("^(", wrapper, ")\\s+in\\s+"), ignore_case = TRUE)) |>
     str_replace(regex(paste0("\\band (", wrapper, ")\\s+in\\s+"),
                       ignore_case = TRUE), " and ") |>
-    # "Engineering (Mechanical Engineering)" -> "Mechanical Engineering", only
-    # when the bracket holds the whole subject.
-    str_replace(regex(paste0("^(", wrapper, ")\\s*\\(([^)]+)\\)$"),
+    # A bracket starting with "and" or "with" qualifies the award instead of
+    # replacing it: "Arts (with Education)" is a degree in Arts and Education,
+    # not a degree in "with Education". Flattening it also merges the survey's
+    # "Arts (and Education)" and "Arts (with Education)" into one subject.
+    str_replace(regex("^(.+?)\\s*\\((?:and|with)\\s+(.+)\\)$",
+                      ignore_case = TRUE), "\\1 with \\2") |>
+    # "Engineering (Mechanical Engineering)" -> "Mechanical Engineering", but
+    # only when the bracket holds the whole subject. The lookahead stops this
+    # firing on a bracket like "(with Education)" and keeping the modifier.
+    str_replace(regex(paste0("^(", wrapper, ")\\s*\\((?!and |with |or )([^)]+)\\)$"),
                       ignore_case = TRUE), "\\2") |>
     str_remove(regex("^major in\\s+", ignore_case = TRUE)) |>
     str_squish() |>
-    # A title that reduced to nothing keeps its original wording rather than
-    # becoming an empty label.
+    # If a title reduces to nothing, keep the original rather than an empty
+    # label.
     (\(s) if_else(s == "" | is.na(s), x, s))()
 }
 
-#' Flags describing the structure of an award, read from its title
+#' Read the structure of an award off its title
 is_honours_degree <- function(x) {
-  str_detect(x, regex("\\(hons\\)|honours|cum laude", ignore_case = TRUE))
+  # Does not test for "cum laude" on purpose. That is the reporting tier and is
+  # moved into cohort_tier in cleaning step 10, before this runs, so a cum laude
+  # branch here could never match.
+  str_detect(x, regex("\\(hons\\)|honours", ignore_case = TRUE))
 }
 
 is_double_degree <- function(x) {

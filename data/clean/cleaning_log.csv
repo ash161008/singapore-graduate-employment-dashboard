@@ -1,12 +1,14 @@
 ﻿"step","action","rows","removed"
 "1. Read raw file","Imported as text to control all type conversion",1550,0
 "2. Repair encoding","Reversed double UTF-8 encoding in name columns",1550,0
-"3. Normalise missing codes","'na' and 'N.A.' recoded to NA throughout",1550,0
-"4. Convert to numeric","Year and 8 measures typed as numbers",1550,0
-"5. Remove suppressed records","Dropped records with no value for any of the 8 measures",1445,105
-"6. Label SUTD faculty level","Structurally absent SUTD school labelled explicitly",1445,0
-"7. Canonicalise names","Spelling, case, footnote and partner-name variants collapsed",1445,0
-"8. Separate reporting tier","SMU 'Cum Laude and above' subset moved to its own variable",1445,0
-"9. Classify fields of study","Degree titles grouped into broad fields",1445,0
-"10. Add university codes","Short codes attached for axis labels",1445,0
-"11. Validate consistency","Range, ordering and uniqueness checks passed",1445,0
+"3. Read footnote markers","Sample-size and follow-up-survey warnings captured as flags before names were cleaned",1550,0
+"4. Normalise missing codes","'na' and 'N.A.' recoded to NA throughout",1550,0
+"5. Convert to numeric","Year and 8 measures typed as numbers",1550,0
+"6. Remove suppressed records","Dropped records with no value for any of the 8 measures",1445,105
+"7. Label SUTD faculty level","Structurally absent SUTD school labelled explicitly",1445,0
+"8. Canonicalise names","Spelling, case, footnote and partner-name variants collapsed",1445,0
+"9. Correct source filing error","School name published in the degree column corrected to the programme name",1445,0
+"10. Separate reporting tier","SMU 'Cum Laude and above' subset moved to its own variable",1445,0
+"11. Classify fields of study","Degree titles grouped into broad fields",1445,0
+"12. Add university codes","Short codes attached for axis labels",1445,0
+"13. Validate consistency","Range, ordering, uniqueness and footnote checks passed",1445,0

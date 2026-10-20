@@ -1,53 +1,58 @@
-# Power BI build specification
-**MA1580 Assessment 2 — Graduate Employment Dashboard**
+# Power BI build notes
+Graduate Employment Dashboard, MA1580
 
-Build this in Power BI Desktop against the CSVs in `data/clean/`. Follow it in order;
-every visual lists its exact field wells. Nothing here requires a Power Query step —
-load the CSVs as they are.
+Build this in Power BI Desktop from the CSVs in `data/clean/`. Follow it in order; every
+visual lists its field wells. Nothing here needs a Power Query step, so the CSVs load as
+they are.
 
 ---
 
-## 0. The story the dashboard tells
+## 0. What the dashboard is arguing
 
-The marking scheme caps a "generic or linear" structure at Satisfactory. So the
-dashboard is not organised as *overview → breakdowns → detail*; it is organised as an
-**argument in four moves**, each page overturning the impression left by the one before.
+The marking scheme caps a generic or linear structure at Satisfactory, so this is not
+laid out as overview, then breakdowns, then detail. Each of the first four pages changes
+the impression left by the one before it.
 
-| Page | Claim the page makes | The number that makes it |
+| Page | What the page says | The figure behind it |
 |---|---|---|
-| 1. A decade of rising pay | Graduate pay has risen steadily and substantially | Median gross **S$3,100 → S$4,350**, +40.3% since 2013 |
-| 2. The headline rate lies | Employment "peaked" in the pandemic — because the jobs got worse | 2020: **94.0%** employed, but only **70.3%** in full-time permanent work (23.7pp gap) |
-| 3. Not everyone carries the risk | The insecurity is concentrated in specific fields | Design & Media: **21.4pp** gap, 80.8% employed, S$3,600 median · Law: **1.8pp**, 96.5%, S$7,000 |
-| 4. So what can you actually control? | Less than you'd think, and less than you used to | Within-programme spread up to **p75/p25 = 1.40**; honours premium fell **17.5% (2014) → 5.9% (2024)** |
+| 1. A decade of rising pay | Graduate pay has risen steadily | Median gross S$3,100 to S$4,350, up 40.3% since 2013 |
+| 2. The headline rate hides the problem | Employment peaked during the pandemic because the jobs got worse | 2020: 94.0% employed but only 70.3% in full-time permanent work, a 23.7pp gap |
+| 3. Not everyone carries the risk | The insecurity sits in particular fields | Design & Media: 21.4pp gap, 80.8% employed, S$3,600 median, so the lowest pay and the least security, against a 5-10pp norm. Computing & IT for comparison: 3.0pp, S$5,400 |
+| 4. What can a student actually control? | Less than expected, and less than before | Within-programme spread up to p75/p25 = 1.40; honours premium fell from 17.5% in 2014 to 5.9% in 2024 |
 
-Page 5 is the interactive explorer, which lets the reader test all four claims against
-any programme they are considering.
+A note on page 3. An earlier version of these notes contrasted Design & Media with Law
+(S$7,000, 1.8pp), which looked like the sharpest pairing available. It was not valid:
+all of Law's records come from a follow-up survey of qualified lawyers after pupillage
+rather than fresh graduates. The Computing & IT comparison above is like-for-like, and
+page 3 is now built so a reader can see which points are measured differently. See the
+page 3 section and `known-limitations.md` section 6.
 
-**Intended audience** (state this in the report's introduction): prospective
+Page 5 is the interactive explorer, where a reader can test all four claims against any
+course they are considering.
+
+Intended audience, which the report's introduction needs to state: prospective
 undergraduates in Singapore and the families advising them, plus JC and polytechnic
-career counsellors. The dashboard's objectives are (i) to show what outcomes actually
-look like across all six autonomous universities over 2013–2024, (ii) to separate pay
-from job security, which the published employment rate conflates, and (iii) to let a
-user find and compare the specific programmes they are choosing between.
+career counsellors. The objectives are to show what outcomes look like across all six
+autonomous universities from 2013 to 2024, to separate pay from job security since the
+published employment rate combines them, and to let a user compare the specific courses
+they are choosing between.
 
 ---
 
-## 0a. If you are building this inside a Windows VM on Apple Silicon
+## 0a. Where to build it
 
-Power BI Desktop runs on Windows on ARM as the x64 build under emulation. It is
-officially supported (Microsoft's minimum requirements require the 2025-09 cumulative
-update, KB5065789, or later), but emulated builds have historically thrown
-**"Error fetching data for this visual"** on visuals using a *continuous date axis*.
+Power BI Desktop is Windows-only and runs natively on x64, so build this on the Windows
+laptop. Install it from the Microsoft Store (it then updates itself) or from the
+Microsoft Download Center as `PBIDesktopSetup_x64.exe`. It is free and needs no licence
+to author a `.pbix` locally — a Power BI account is only required to *publish* to the
+Power BI Service, which this assessment does not ask for.
 
-If that happens, you do not need to redesign anything. Every date-axis visual in this
-spec has an integer fallback already in the model:
+Copy across the whole repository, or at minimum `data/clean/`, `powerbi/` and `docs/`.
+Everything in §1 onward assumes paths relative to the repository root.
 
-- Swap `dim_year[year_date]` for `dim_year[year]` on the X axis
-- Set the axis type to **Categorical** instead of Continuous
-
-You lose the proportionally-spaced time axis, which costs nothing here because the
-series has no gaps — all twelve years are present and evenly spaced, so a categorical
-axis renders identically. No measure in §4 depends on `year_date`.
+Nothing in this spec needs a workaround on native Windows: the continuous date axes,
+small multiples, decomposition tree, report-page tooltips and drill-through all behave
+normally.
 
 ---
 
@@ -79,6 +84,35 @@ same data and would double the model. `cleaning_log.csv`, `data_dictionary.csv`,
 `degree_field_mapping.csv` and `excluded_suppressed_records.csv` are documentation for
 the report appendix, not model tables.
 
+### Why only two of the six `agg_*` tables are imported — a deliberate choice
+
+`agg_year`, `agg_university_year`, `agg_field_year` and `agg_award_route_year` are
+**exported by R but not imported into the model**. This is a decision with a real
+tradeoff, and the report's Dashboard section should state it as one.
+
+The tension: the brief requires all transformation in R, which argues for pre-aggregating
+there. But these four tables are exactly recomputable as DAX measures over
+`fact_employment`, so importing them would put two routes to the same number in one
+model — and when a slicer moves, a pre-aggregated table cannot respond, so the two routes
+would disagree on screen.
+
+**The choice made, and why:** R remains the only place aggregation logic is *authored*.
+Those four tables are the source of every figure quoted in the written report, so the
+report's numbers are generated by the pipeline and cannot drift. The dashboard instead
+reads the fact table through the DAX measures in §4, which is what lets a figure respond
+to a slicer at all. The two agree because both aggregate the same cleaned fact table by
+the same definitions — and `agg_year` is the cross-check: if a DAX measure ever
+disagrees with it, one of them is wrong.
+
+`agg_subject` and `honours_premium` *are* imported, because they are not recomputable
+from `fact_employment` by a measure: `agg_subject` pools across all years at a grain no
+visual filters to, and `honours_premium` requires pivoting the two reporting tiers into
+the same row to subtract them. Both stay **unrelated** to the model for that reason.
+
+The defensible summary for the report: *aggregation logic lives in R; the dashboard's
+DAX layer performs no cleaning, reshaping or deriving, only the presentation-time
+aggregation that interactivity requires.*
+
 ### Why a star schema at all
 
 Power BI cross-filters *through relationships*. A single flat table can only filter
@@ -86,8 +120,8 @@ itself: a university slicer and a field-of-study chart built on the same flat ta
 cannot interact the way the assessment requires. Splitting the data into one fact table
 of measures surrounded by small descriptive dimension tables is precisely what makes a
 slicer on one attribute filter a chart built on another — and it stores each university
-name 6 times instead of 1,445. This is the single most important sentence to put in the
-report's Dashboard section about model design.
+name 6 times instead of 1,445. Worth putting in the report's Dashboard section when
+explaining the model.
 
 ---
 
@@ -232,7 +266,7 @@ RETURN
 
 Thin Evidence Warning =
     IF ( [Programmes] < 5,
-         "⚠ Fewer than 5 programme-years in this selection — read with caution",
+         "Fewer than 5 programme-years in this selection - read with caution",
          BLANK () )
 ```
 
@@ -241,7 +275,7 @@ Thin Evidence Warning =
 place; `Pay Growth Since 2013`, `Pay YoY %` and `Honours Premium %` as Percentage with
 1 decimal place.
 
-`Thin Evidence Warning` is worth building: it is an honest guard against reading a trend
+`Thin Evidence Warning` is worth building: it guards against reading a trend
 off two data points, and the report's limitations section can point at it.
 
 ---
@@ -287,25 +321,25 @@ charts in the same position and use `Selection pane → Hide/Show` + `Bookmark �
 ### Page 2 — "The headline rate lies"
 *Subtitle: Employment peaked in the pandemic. The jobs behind that peak were the worst in the series.*
 
-**Layout**: the argument chart gets two-thirds of the canvas. This is the page the whole
-dashboard turns on, so nothing competes with it.
+**Layout**: visual 1 gets two-thirds of the canvas, since it carries the page's point
+and nothing should compete with it.
 
 | # | Visual | Field wells | Why this form |
 |---|---|---|---|
-| 1 | **Line chart** (2 series, ONE axis) | X `dim_year[year_date]` · Y `[Employment Rate]` + `[FT Permanent Rate]` | Both series are percentages, so they share one axis — the **gap between the lines is the finding**, and a second y-axis would destroy it. Legend on, plus direct labels on both final points |
-| 2 | **Column chart** | X `dim_year[year]` · Y `[Insecure Work Gap]` | The same story as a magnitude: the 2020 column at 23.7pp against a 5–10pp norm needs no explanation |
-| 3 | **Card** ×3 | `[Employment Rate]`, `[FT Permanent Rate]`, `[Insecure Work Gap]` with a page filter of `year = 2020` | Pins the specific numbers the argument rests on |
-| 4 | **Textbox** | Annotation: *"2020's record employment rate counted traineeships and temporary placements. Only 70.3% of that cohort held a full-time permanent job — the lowest in twelve years."* | A chart that needs a sentence should get the sentence |
+| 1 | **Line chart** (2 series, one axis) | X `dim_year[year_date]` · Y `[Employment Rate]` + `[FT Permanent Rate]` | Both series are percentages so they share one axis, and the gap between the lines is what the page is about. A second y-axis would hide it. Legend on, plus direct labels on both final points |
+| 2 | **Column chart** | X `dim_year[year]` · Y `[Insecure Work Gap]` | The same point as a magnitude. The 2020 column at 23.7pp against a 5-10pp norm reads at a glance |
+| 3 | **Card** ×3 | `[Employment Rate]`, `[FT Permanent Rate]`, `[Insecure Work Gap]` with a page filter of `year = 2020` | Fixes the specific numbers on the page |
+| 4 | **Textbox** | *"2020's record employment rate counted traineeships and temporary placements. Only 70.3% of that cohort held a full-time permanent job, the lowest in twelve years."* | Some charts need a sentence of context |
 
 **Visual 1 detail**: shade the pandemic years. Add a `Shaded area` via
 `Analytics → Shaded area` if available for your build, or place a rectangle shape at
 20% transparency `#e1e0d9` behind the 2020–2021 band and send it backward. Label it
 "Pandemic cohorts" in `#898781` 9pt.
 
-**Visual 2 detail**: this is a magnitude chart, so it is **one hue, not categorical** —
-set all columns to `#2a78d6` and then use `Format → Columns → Apply settings to → 2020`
-to give that single column the status colour `#d03b3b`. Emphasis, the most underused
-form: one bar in the accent, the rest recessive.
+**Visual 2 detail**: this shows magnitude, so use one hue rather than a categorical
+palette. Set all columns to `#2a78d6`, then use `Format → Columns → Apply settings to →
+2020` to give that one column `#d03b3b`. One bar in the accent colour with the rest
+recessive puts the emphasis where it belongs.
 
 ---
 
@@ -314,21 +348,74 @@ form: one bar in the accent, the rest recessive.
 
 | # | Visual | Field wells | Why this form |
 |---|---|---|---|
-| 1 | **Scatter chart** | X `[Median Gross Pay]` · Y `[Insecure Work Gap]` · Details `dim_field[field]` · Size `[Programmes]` | Two measures, one point per field — the only form that shows pay and security are *not* the same ranking. 13 points, **single hue `#2a78d6`**, category labels on. No colour-per-field: scatter is an all-pairs form and caps at three colour series |
-| 2 | **Clustered bar chart** | Y `dim_field[field]` · X `[Insecure Work Gap]` · sorted descending | Magnitude over 13 long category names → horizontal bars, one sequential hue |
-| 3 | **Line chart, small multiples** | X `dim_year[year_date]` · Y `[Median Pay Index]` · Small multiples `dim_field[field]` · grid 4×2, "Show all" off | 13 series on one chart is three times the colour ceiling. Small multiples is the correct answer, not more hues. `Median Pay Index` not raw pay, so inflation and sector-wide wage growth are already removed and a rising panel means genuinely pulling ahead |
-| 4 | **Line chart** | X `dim_field[field]` sorted · Y `[Median P25]`, `[Median Gross Pay]`, `[Median P75]` | Three series, same unit, one axis: shows the *distribution* behind each field's median. Health Sciences' S$391 spread against Computing's S$1,452 is the point |
+| 1 | **Scatter chart** | X `[Median Gross Pay]` · Y `[Insecure Work Gap]` · Details `dim_field[field]` · Size `[Programmes]` | Two measures, one point per field. This is the form that shows pay and security are not the same ranking. 13 points, category labels on. Not coloured per field: a scatter can put any two points next to each other, so it caps at three colour series |
+| 2 | **Clustered bar chart** | Y `dim_field[field]` · X `[Insecure Work Gap]` · sorted descending | Magnitude across 13 long category names, so horizontal bars in one hue |
+| 3 | **Line chart, small multiples** | X `dim_year[year_date]` · Y `[Median Pay Index]` · Small multiples `dim_field[field]` · grid 4×2, "Show all" off | 13 series on one chart is three times the colour ceiling, so small multiples rather than more hues. Uses the pay index instead of raw pay, so inflation and sector-wide wage growth are already out and a rising panel means pulling ahead of peers |
+| 4 | **Line chart** | X `dim_field[field]` sorted · Y `[Median P25]`, `[Median Gross Pay]`, `[Median P75]` | Three series in the same unit on one axis, showing the spread behind each field's median. Health Sciences spreads S$391 against Computing's S$1,452 |
 
 **Visual 1 detail**: add quadrant reference lines (`Analytics → X-Axis constant line` at
 the all-field median pay, `Y-Axis constant line` at the all-field mean gap), both
-`#c3c2b7` dotted. Then emphasise the two extremes: set `Details` colours so every field
-is `#898781` except Law (`#2a78d6`) and Design & Media (`#d03b3b`). Label the quadrants
-with four small textboxes — "well paid, secure" / "well paid, insecure" / "lower paid,
-secure" / "lower paid, insecure".
+`#c3c2b7` dotted. Label the quadrants with four small textboxes — "well paid, secure" /
+"well paid, insecure" / "lower paid, secure" / "lower paid, insecure".
 
-**Visual 1 is the single most valuable chart in the dashboard** for the report's
-Dashboard section: name it, explain that a scatter was chosen because the reader's task
-is to see that two rankings disagree, and explain the emphasis colouring.
+### Important: visual 1 is not a like-for-like comparison by default
+
+MOE reports some programmes from a follow-up survey of the previous year's graduates,
+taken after their practical training, rather than from the fresh-graduate cohort. The
+pipeline keeps this as `fact_employment[flag_followup_survey]`, with
+`fact_employment[cohort_basis]` as the readable version. It is concentrated in four
+fields:
+
+| Field | From a follow-up survey |
+|---|---|
+| Law | 100% |
+| Medicine & Dentistry | 63% |
+| Architecture & Built Environment | 20% |
+| Health Sciences | 11% |
+| All other nine fields | 0% |
+
+Law's S$7,000 median is qualified lawyers after pupillage. Plotting that against Design
+& Media's S$3,600 of fresh graduates, and colouring Law as the standout, compares two
+career stages and points the reader at the wrong conclusion.
+
+Build it this way instead. Put `fact_employment[cohort_basis]` on the scatter's
+**Legend**. That is two series, inside the three-series cap, and it makes the
+distinction part of the chart rather than a disclaimer under it:
+
+- `Fresh graduates` → `#2a78d6`
+- `Follow-up survey (post-training)` → `#eb6834`
+
+Then put the emphasis inside the valid comparison. Design & Media is the real finding,
+with the lowest pay and the least security on fresh-graduate data, so give it the direct
+label and leave Law in the orange series where it is visibly measured differently.
+
+Caption: *"Orange points come from a follow-up survey of an earlier cohort, after
+professional training. They are not graduate starting salaries and are not comparable
+with the blue points."*
+
+This is good material for the report's Key findings and limitations section, since the
+dashboard does not just disclose the comparability problem, it is built so a reader
+cannot miss it.
+
+**Visual 1 for the report**: explain that a scatter was chosen because the reader's task
+is to see that two rankings disagree, and that `cohort_basis` is on the legend because
+some points are not measuring the same thing as the rest.
+
+**Visual 2 detail**: the same caveat applies to the insecure-work bars. Add
+`[Follow-up share]` as a tooltip measure, so hovering Law shows that all of it is
+follow-up data:
+
+```dax
+Follow-up share =
+    DIVIDE ( CALCULATE ( [Programmes],
+                         fact_employment[flag_followup_survey] = TRUE ),
+             [Programmes] )
+```
+
+**Visuals 3 and 4 detail**: both read `[Median Pay Index]`, whose benchmark is computed
+in R from **fresh-graduate records only**, so a flagged field's index reads as "relative
+to that year's fresh graduates". Informative, but say so in the axis title:
+*Pay index (100 = median fresh-graduate programme that year)*.
 
 ---
 
@@ -346,7 +433,7 @@ programme and year, that is a natural experiment nobody else in the dataset supp
 | 1 | **Clustered bar chart** | Y `dim_degree[subject]` · X `[Pay, All Graduates]` + `[Pay, Cum Laude]` · page filter `university_code = SMU`, `year = 2024` | Before→after per item. Two shades of one hue (`#2a78d6` / `#cde2fb`), not two categorical hues — they are the same quantity in two states, not two different things |
 | 2 | **Line chart** | X `honours_premium[year]` · Y `Average of honours_premium[premium_pct]` | The decline from 17.5% (2014) to 5.9% (2024) is the finding. Uses the unrelated `honours_premium` table |
 | 3 | **Card** ×2 | `Median of honours_premium[premium_sgd]`, `Median of honours_premium[premium_pct]` | The premium in dollars and in per cent |
-| 4 | **Textbox** | Why only SMU, and the caveat that the subset is a sub-population of the cohort row and the two must never be summed | Honest about the limit of the evidence |
+| 4 | **Textbox** | Why only SMU, and the warning that the subset is part of the cohort row above it so the two must never be summed | States the limit of the evidence on the page |
 
 ---
 
@@ -414,9 +501,16 @@ Five marks ride on labelling alone, and this pass is quick:
   what the visual shows and what the reader should take from it.
 - Set the **tab order** on each page (`View → Selection → Tab order`): title, then KPIs,
   then charts in reading order, slicers last.
-- `Insert → Text box` a one-line source credit on page 1: *Source: MOE Graduate
-  Employment Survey (NTU, NUS, SIT, SMU, SUSS, SUTD), 2013–2024, via data.gov.sg.
-  Cleaned and transformed in R; see appendix.*
+- `Insert → Text box` the **licence-required attribution** on page 1. The Singapore
+  Open Data Licence obliges a visible acknowledgement of the source and a link to the
+  licence, so this is a compliance item, not a courtesy. Set it in 8pt `#898781`:
+
+  > Contains information from the *Graduate Employment Survey – NTU, NUS, SIT, SMU, SUSS
+  > & SUTD*, accessed 18 September 2026 from data.gov.sg, made available under the
+  > Singapore Open Data Licence v1.0 (data.gov.sg/open-data-licence). Custodian: Ministry
+  > of Education, Singapore. Cleaned and transformed in R — see appendix.
+
+  Full provenance is in `docs/data-provenance.md`.
 - The two caveats that must appear on the canvas, not only in the report:
   1. On pages 1, 3 and 5: *Figures are unweighted medians across programmes. The survey
      publishes no cohort sizes, so a 15-graduate programme counts as much as a
@@ -427,9 +521,23 @@ Five marks ride on labelling alone, and this pass is quick:
 
 ## 7. Checks before you export
 
+**First, the mapping a marker will look for.** The task names three required pages;
+this dashboard has five, so make the correspondence explicit rather than leaving it to
+be inferred — say it in the report's Dashboard section and keep the page tab names close
+to the task's wording:
+
+| Task requires | Delivered by |
+|---|---|
+| Overview page | Page 1 — A decade of rising pay |
+| Detailed insights page (trends, breakdowns) | Page 2 — The headline rate lies (trends) **and** Page 3 — Not everyone carries the risk (breakdowns) |
+| Interactive page (slicers, filters, drill-downs) | Page 5 — Explore a programme |
+| *(beyond requirement)* | Page 4 — What is honours actually worth? |
+
 | Requirement | Check |
 |---|---|
-| ≥3 pages | 5 visible pages ✔ |
+| ≥3 pages | 5 visible pages, mapped above ✔ |
+| ≥200 rows, ≥6 columns in source | 1,550 × 12 ✔ |
+| Licence attribution visible | Source + licence notice on page 1 |
 | ≥5 visual types | card, line, column, clustered bar, treemap, scatter, matrix, decomposition tree, small-multiple line = **9** ✔ |
 | Slicers work | Change each page-5 slicer; confirm the matrix, tree and line all move |
 | Cross-filtering works | Click a treemap tile on page 1 and a matrix row on page 5 |
@@ -447,30 +555,31 @@ Save as `GradEmploymentDashboard.pbix` in the project root.
 
 ## 8. What to carry into the report's Dashboard section (40 marks)
 
-This section is the heaviest single item in the report. It needs three things, and this
-spec has supplied each:
+This is the heaviest item in the report, and it needs three things:
 
-1. **Layout rationale** — §0 (the four-move argument, and why not overview→detail→done)
-   and the per-page layout notes (KPI strip first because a stat tile beats a one-bar
-   chart; the argument chart given two-thirds of page 2 so nothing competes with it;
-   slicers in one rail rather than scattered).
-2. **Why each visual type** — the "Why this form" column in every page table. The
-   reasoning to reproduce: the data's *job* picks the form. Magnitude → bar. Trend →
-   line. Two measures that disagree → scatter. One value → card. More than ~7 meaningful
-   classes → matrix. Before/after per item → paired bar in two shades of one hue.
-   13 series → small multiples, never 13 colours.
-3. **How each interactive feature aids the user** — slicers narrow to the programmes a
-   specific reader is choosing between; the matrix drill-down moves from a field to a
-   named degree without a new page; the drill-through answers "tell me everything about
-   this one programme"; the page-1 bookmark toggle makes the reader *discover* the pay/
-   security divergence rather than being told it; the report-page tooltip shows a trend
-   on hover instead of repeating the number already on screen; `[Selected Scope]` and
-   `[Thin Evidence Warning]` keep the reader honest about what is on screen and whether
-   it is enough data to support a claim.
+1. **Layout rationale.** Section 0 covers the four-move structure and why it is not
+   overview, then detail, then done. The per-page notes cover the rest: the KPI strip
+   first because four headline numbers read faster than a chart; visual 1 on page 2
+   given two-thirds of the canvas so nothing competes with it; slicers in one rail
+   instead of scattered between charts.
+2. **Why each visual type.** The "Why this form" column in each page table. The general
+   reasoning: the job the data has to do picks the form. Magnitude goes to a bar, trend
+   to a line, two measures that disagree to a scatter, a single value to a card, more
+   than about seven meaningful categories to a matrix, before and after per item to a
+   paired bar in two shades of one hue, and 13 series to small multiples rather than 13
+   colours.
+3. **How each interactive feature helps.** Slicers narrow the data to the courses one
+   reader is choosing between. The matrix drill-down goes from field to named degree
+   without leaving the page. The drill-through answers "tell me everything about this
+   one programme". The page 1 bookmark toggle lets the reader find the pay and security
+   divergence instead of being told it. The report-page tooltip shows a trend on hover
+   rather than repeating a number already on screen. `[Selected Scope]` and
+   `[Thin Evidence Warning]` say what is currently on screen and whether there is enough
+   data behind it.
 
-Two design decisions worth naming explicitly, because they show judgment rather than
-default settings: **no dual-axis chart anywhere** (two scales on one frame invite a
-false visual correlation; where two measures share a unit they share one axis, and the
-gap between the lines becomes the finding), and **colour assigned by the entity rather
-than by rank** (a slicer that changes the series count must never repaint the
-survivors, or the reader loses the thread between pages).
+Two decisions worth stating, since they are choices rather than defaults. First, no
+dual-axis charts: two scales in one frame suggest a correlation that may not be there,
+so where two measures share a unit they share an axis and the gap between the lines
+becomes the point. Second, colour follows the entity rather than its rank, so a slicer
+that changes how many series are on screen does not repaint the remaining ones and the
+reader can follow the same colour across pages.

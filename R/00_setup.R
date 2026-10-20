@@ -1,17 +1,13 @@
 # ==============================================================================
-# 00_setup.R  --  Environment, paths and project-wide constants
+# 00_setup.R  --  Packages, paths and lookup tables
 # ==============================================================================
-# MA1580 Assessment 2 -- Graduate Employment Dashboard
+# MA1580 -- Graduate Employment Dashboard
 #
-# PURPOSE
-#   Single place where packages, file paths and shared lookup tables are
-#   defined, so that every later script depends on configuration rather than
-#   on hard-coded literals. Sourced first by run_all.R.
+# Keeps all configuration in one file so the later scripts contain logic
+# rather than hard-coded values. Sourced first by run_all.R.
 #
-# CONTRACT
-#   data/raw/   is immutable. It is only ever read.
-#   data/clean/ is rebuilt from scratch on every run, so the pipeline is
-#               reproducible end to end and no stale output can survive.
+# data/raw/ is only ever read. data/clean/ is rebuilt on every run, so there
+# is no chance of stale output surviving.
 # ==============================================================================
 
 suppressPackageStartupMessages({
@@ -34,8 +30,8 @@ PATHS <- list(
 if (!dir.exists(PATHS$clean)) dir.create(PATHS$clean, recursive = TRUE)
 
 # ---- Column groups -----------------------------------------------------------
-# The eight survey measures. They arrive as character because missing values
-# are coded as text ("na" / "N.A."), which forces the whole column to text.
+# The eight survey measures. All eight import as text because missing values
+# are written as words ("na" / "N.A."), which forces the column to character.
 MEASURE_COLS <- c(
   "employment_rate_overall", "employment_rate_ft_perm",
   "basic_monthly_mean", "basic_monthly_median",
@@ -43,69 +39,79 @@ MEASURE_COLS <- c(
   "gross_mthly_25_percentile", "gross_mthly_75_percentile"
 )
 
-RATE_COLS   <- MEASURE_COLS[1:2]   # percentages, valid range 0-100
+RATE_COLS   <- MEASURE_COLS[1:2]   # percentages, 0-100
 INCOME_COLS <- MEASURE_COLS[3:8]   # SGD per month, must be positive
 
 # ---- Missing-value tokens ----------------------------------------------------
-# data.gov.sg encodes "not available" inconsistently across survey years.
+# "Not available" is written differently in different survey years.
 NA_TOKENS <- c("na", "n.a.", "n.a", "nil", "-", "", "null")
 
 # ---- University short codes --------------------------------------------------
-# Full legal names are 30-45 characters and unusable as chart axis labels.
+# The full names run to 45 characters and do not fit on a chart axis.
 UNIVERSITY_LOOKUP <- tribble(
-  ~university_full,                                 ~university_code, ~university_type,
-  "Nanyang Technological University",               "NTU",            "Comprehensive",
-  "National University of Singapore",               "NUS",            "Comprehensive",
-  "Singapore Institute of Technology",              "SIT",            "Applied",
-  "Singapore Management University",                "SMU",            "Specialised",
-  "Singapore University of Social Sciences",        "SUSS",           "Applied",
-  "Singapore University of Technology and Design",  "SUTD",           "Specialised"
+  ~university_full,                                 ~university_code,
+  "Nanyang Technological University",               "NTU",
+  "National University of Singapore",               "NUS",
+  "Singapore Institute of Technology",              "SIT",
+  "Singapore Management University",                "SMU",
+  "Singapore University of Social Sciences",        "SUSS",
+  "Singapore University of Technology and Design",  "SUTD"
 )
 
 # ---- Field-of-study classification ------------------------------------------
-# 331 distinct degree titles cannot be plotted or filtered meaningfully, so each
-# is assigned to one broad field. Rules are applied IN ORDER and the first match
-# wins; the order encodes deliberate precedence decisions for interdisciplinary
-# and double-degree titles, e.g.
-#   "Computer Engineering"                      -> Computing & IT   (not Engineering)
-#   "Aerospace Engineering and Economics"       -> Engineering      (not Economics)
-#   "Naval Architecture"                        -> Engineering      (not Architecture)
-#   "Computer Science & Game Design"            -> Computing & IT   (not Design & Media)
-# Every precedence choice is listed in the report so results are interpretable.
+# There are over 300 distinct degree titles, far too many to put on a chart or
+# in a slicer, so each is assigned to one of 13 broader fields.
+#
+# The rule used throughout: a degree goes to the discipline whose method it
+# teaches, not the industry that method is applied in. Examples:
+#
+#   Business Analytics          -> Computing & IT  (method analytics, domain business)
+#   Computational Biology       -> Computing & IT  (method computation, domain biology)
+#   Pharmaceutical Engineering  -> Engineering     (method engineering, domain pharma)
+#   Computer Engineering        -> Computing & IT
+#   Maritime Studies            -> Business        (method management, domain shipping)
+#
+# The rules are tested in order and the first match wins, so the ordering is
+# what enforces the rule. Double degrees take the field of the discipline named
+# first, so "Aerospace Engineering and Economics" is Engineering.
 FIELD_RULES <- tribble(
   ~field, ~pattern,
 
-  # Professional degrees first: unambiguous and must not be captured by the
-  # generic "science" or "arts" patterns further down.
+  # Professional degrees first, so the general "science" and "arts" patterns
+  # lower down cannot claim them.
   "Education",                        "education|early childhood",
   "Medicine & Dentistry",             "medicine|surgery|mbbs|dental|dentistry",
-  "Health Sciences",                  "nursing|pharmac|physiotherap|occupational therapy|radiograph|radiation therapy|dietetic|nutrition|speech and language",
 
-  # Computing is claimed before Engineering and Design so that titles awarded as
-  # a BEng or a BA but taught as computing are grouped with their discipline.
+  # Computing before Engineering, so a computing course awarded as a BEng or a
+  # BA is still grouped with computing.
   "Computing & IT",                   "computer science|computer engineering|computational|computing|information system|information security|information & communications technology|software engineering|data science|artificial intelligence|analytics|electronic commerce|interactive simulation",
 
   "Design & Media",                   "art, design|fine arts|digital art|animation|interior design|industrial design|communication design|user experience|game design|digital communications|integrated media",
 
-  # Marine/naval titles are engineering despite containing "architecture".
+  # Marine and naval courses are engineering even though they say "architecture".
   "Engineering",                      "naval architecture|marine engineering|offshore engineering",
   "Architecture & Built Environment", "architecture|real estate|project and facilities|landscape|sustainable design",
+
+  # Engineering before Health Sciences, which is what puts Pharmaceutical
+  # Engineering in Engineering. No health course in this data says "engineering",
+  # so this ordering changes nothing else.
   "Engineering",                      "engineering|engineer|mechatronics|telematics|aeronautical|aircraft systems|aerospace|materials science|electromechanical",
+  "Health Sciences",                  "nursing|pharmac|physiotherap|occupational therapy|radiograph|radiation therapy|dietetic|nutrition|speech and language",
 
   "Law",                              "\\blaws?\\b|llb",
   "Economics",                        "economic",
   "Business & Management",            "business|accountanc|management|marketing|finance|supply chain|human resource|hospitality|culinary|air transport|maritime studies",
 
-  # "Social Sciences" must be tested before "Science".
+  # "Social Sciences" has to be tested before "Science".
   "Arts, Humanities & Social Sciences", "social science|social work|psycholog|sociolog|philosoph|history|english|chinese|linguistic|communication studies|public policy|global affairs|criminolog|music|humanities|sport science|sports science|public safety|environmental studies|\\barts\\b",
   "Science",                          "science|biolog|chemistr|physics|mathemat|biomedical|environmental earth|food technology|food & human|food and human",
 
-  "Interdisciplinary",                "double major|cum laude and above"
+  "Interdisciplinary",                "double major"
 )
 
 # ---- Cohort eras -------------------------------------------------------------
-# Graduating cohorts are grouped so the dashboard can compare labour-market
-# regimes rather than forcing the reader to interpret twelve separate years.
+# Years are grouped so the dashboard can compare three labour markets instead
+# of asking the reader to interpret twelve separate years.
 ERA_BREAKS <- tribble(
   ~era,                 ~year_from, ~year_to,
   "Pre-pandemic",             2013L,    2019L,
@@ -114,14 +120,13 @@ ERA_BREAKS <- tribble(
 )
 
 # ---- School aliases ----------------------------------------------------------
-# Applied after generic formatting clean-up, for the differences that remain:
-# genuine alternative names and institutional renames, rather than formatting.
-# Each mapping is listed explicitly so a reader can audit it, and each is
-# justified in the report's data section.
+# Applied after the general formatting clean-up, for the differences that are
+# left: alternative names and faculty renames rather than spelling. Listed here
+# so each mapping can be checked.
 SCHOOL_ALIASES <- tribble(
   ~school_raw,                                                         ~school_canonical,
 
-  # Plural/singular and abbreviated forms of the same faculty.
+  # Singular/plural and abbreviated versions of the same faculty.
   "College of Sciences",                                               "College of Science",
   "Multi-Disciplinary Programme",                                      "Multi-Disciplinary Programmes",
   "Multidisciplinary Programmes",                                      "Multi-Disciplinary Programmes",
@@ -129,30 +134,28 @@ SCHOOL_ALIASES <- tribble(
   "Yong Loo Lin School (Medicine)",                                    "Yong Loo Lin School of Medicine",
   "YST Conservatory of Music",                                         "Yong Siew Toh Conservatory of Music",
 
-  # Diacritics were lost from some records on export and cannot be recovered
-  # from the text itself, so the affected records are mapped to the correct name.
-  "Technische Universitat Munchen",                                    "Technische Universit\u00e4t M\u00fcnchen",
+  # Some records lost their accents on export and the text cannot be repaired,
+  # so they are mapped to the correct name.
+  "Technische Universitat Munchen",                                    "Technische Universität München",
 
-  # SMU renamed its School of Information Systems to the School of Computing and
-  # Information Systems in 2022. Treating the two names as one faculty keeps the
-  # dashboard's trend lines continuous across the rename rather than showing one
-  # school ending and another beginning.
+  # SMU renamed its School of Information Systems to the School of Computing
+  # and Information Systems in 2022. Treating both names as one faculty keeps
+  # the trend line continuous instead of showing one school stopping and
+  # another starting.
   "School of Information Systems",                                     "School of Computing and Information Systems",
 
-  # From 2023 SMU reports its computing faculty split by major. The split is a
-  # degree-level distinction, already captured by the degree variable, so both
-  # labels are returned to the faculty they belong to.
+  # From 2023 SMU splits that faculty by major. The major is already in the
+  # degree column, so both labels go back to the faculty.
   "School of Computing and Information Systems - Computer Science",    "School of Computing and Information Systems",
   "School of Computing and Information Systems - Information Systems", "School of Computing and Information Systems"
 ) |>
   mutate(school_canonical = stringi::stri_unescape_unicode(school_canonical))
 
 # ---- Degree-name recovery ----------------------------------------------------
-# Six 2023 SMU records carry only the reporting tier in the degree column, so
-# the programme has to be read off the faculty label they were filed under. Two
-# of the resulting names need mapping onto the wording SMU uses for the same
-# programme in every other year, so that the record joins its own trend line
-# instead of creating a one-year orphan category.
+# Six 2023 SMU records have only the reporting tier in the degree column, so the
+# programme has to be taken from the faculty they were filed under. Two of the
+# resulting names need mapping to the wording SMU uses in other years, or the
+# record becomes a one-year category of its own.
 DEGREE_RECOVERY <- tribble(
   ~degree_recovered,                   ~degree_canonical,
   "Business",                          "Business Management",
@@ -160,12 +163,11 @@ DEGREE_RECOVERY <- tribble(
 )
 
 # ---- Subject aliases ---------------------------------------------------------
-# After full award titles are reduced to their subject, a handful of subjects
-# still differ only by a plural, a hyphen or internal capitalisation, which
-# would split one subject's trend line in two. The surviving differences are
-# resolved here. The NUS "Bachelor of Laws (LLB)" and the NTU and SMU "Law"
-# are deliberately merged, because comparing the same subject across
-# universities is the point of the subject level.
+# Once award titles are reduced to their subject, a few subjects still differ
+# only by a plural, a hyphen or capitalisation, which would split one trend
+# line in two. NUS "Bachelor of Laws (LLB)" and NTU/SMU "Law" are merged on
+# purpose, since comparing the same subject across universities is what the
+# subject column is for.
 SUBJECT_ALIASES <- tribble(
   ~subject_raw,                                        ~subject_canonical,
   "Biomedical Science (Traditional Chinese Medicine)", "Biomedical Sciences (Traditional Chinese Medicine)",
@@ -177,4 +179,49 @@ SUBJECT_ALIASES <- tribble(
   "Laws",                                              "Law",
   "Laws (LLB)",                                        "Law",
   "Laws (L.L.B)",                                      "Law"
+)
+
+# ---- Footnote markers --------------------------------------------------------
+# MOE marks some programme names with footnote symbols. The legend that defines
+# them is printed under the original table and is not included in the CSV, so
+# without it the symbols look like formatting. They are not: two of them say
+# something important about how the figure was produced.
+#
+# Legend transcribed from the dataset page:
+#   https://data.gov.sg/datasets/d_3c55210de27fcccda2ed0c63fdd2b352/view
+FOOTNOTE_LEGEND <- tribble(
+  ~marker, ~meaning, ~handled_as,
+
+  "*",   "SMU courses are direct four-year programmes whose graduates may be awarded Cum Laude and above; SMU publishes both the whole cohort and that subset",
+         "cohort_tier",
+
+  "^",   "Figures are based on fewer than 30 respondents",
+         "flag_small_sample",
+
+  "^^",  "Figures include graduates of Bachelor of Engineering (Bioengineering), a course merged into Biomedical Engineering in 2014",
+         "Documented only",
+
+  "**",  "No figures published, because of a small number of graduates and/or a low response rate",
+         "Explains the suppressed records",
+
+  "#",   "Figures come from a follow-up survey of the prior year's graduates, taken after their practical training or equivalent (Law, Medicine, Pharmacy, Biomedical Sciences & Chinese Medicine); for Architecture, of graduates three years earlier",
+         "flag_followup_survey",
+
+  "##",  "NTU Medicine figures come from a follow-up survey taken after housemanship or first-year residency",
+         "flag_followup_survey",
+
+  "###", "SUTD Architecture and Sustainable Design figures come from a follow-up survey taken after practical training",
+         "flag_followup_survey"
+)
+
+# ---- Source errors -----------------------------------------------------------
+# One 2024 SUSS record has a school name in its degree column, where MOE filed
+# "School of Public Safety and Security" instead of the programme name. SUSS
+# published "Bachelor of Public Safety and Security" for the same school in
+# 2023, so the record is corrected to that rather than dropped, which keeps the
+# observation and lets the two years form a trend. Listed here so the one place
+# a record's identity is changed is easy to find.
+DEGREE_CORRECTIONS <- tribble(
+  ~degree_as_published,                    ~degree_corrected,
+  "School of Public Safety and Security",  "Bachelor of Public Safety and Security"
 )

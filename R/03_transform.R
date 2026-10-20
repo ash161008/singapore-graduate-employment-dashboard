@@ -1,21 +1,18 @@
 # ==============================================================================
 # 03_transform.R  --  Derived measures and the dimensional model
 # ==============================================================================
-# PURPOSE
-#   The survey publishes eight raw figures per programme. On their own they
-#   answer only "what was the number"; the dashboard needs to answer "is that
-#   good, for whom, and is it getting better". This script derives the measures
-#   that make those comparisons possible, then reshapes the single cleaned
-#   table into a star schema.
+# The survey gives eight figures per programme, which say what the number was
+# but not whether it is good, for whom, or improving. This script works out the
+# measures needed for those comparisons, then splits the cleaned table into a
+# star schema.
 #
-#   WHY A STAR SCHEMA. Power BI cross-filters through relationships. A single
-#   flat table can only filter itself, so slicers do not interact and the same
-#   university name is stored 1,445 times. Splitting the data into one fact
-#   table of measures surrounded by small descriptive dimension tables is what
-#   makes a slicer on university filter a chart built on field of study, and
-#   what keeps the model small enough to stay responsive.
+# Why a star schema: Power BI cross-filters through relationships, and a single
+# flat table can only filter itself, so slicers would not interact. One fact
+# table of measures with small dimension tables around it is what lets a
+# university slicer filter a chart built on field of study. It also stores each
+# university name six times instead of 1,445.
 #
-#   ALL aggregation lives here, in R, not in Power Query.
+# All aggregation happens here in R, not in Power Query.
 # ==============================================================================
 
 message("\n== 03_transform.R ==")
@@ -34,39 +31,56 @@ employment <- employment_clean |>
     is_honours       = is_honours_degree(degree),
     is_double_degree = is_double_degree(degree),
 
-    # PAY DISPERSION. Two programmes can share a median and offer completely
-    # different risk: the gap between the 25th and 75th percentile says how
-    # widely outcomes vary between graduates of the same programme, which a
-    # median alone conceals.
+    # Pay spread. Two programmes can have the same median but very different
+    # risk. The gap between the 25th and 75th percentile shows how much
+    # outcomes vary between graduates of the same programme, which the median
+    # on its own hides.
     pay_spread_sgd   = gross_mthly_75_percentile - gross_mthly_25_percentile,
     pay_spread_ratio = gross_mthly_75_percentile / gross_mthly_25_percentile,
 
-    # VARIABLE PAY. Gross pay includes overtime, allowances and bonuses, basic
-    # pay does not. The gap between them shows how much of a starting salary is
-    # guaranteed and how much depends on hours worked or performance.
+    # Variable pay. Gross includes overtime, allowances and bonuses; basic does
+    # not. The gap shows how much of the starting salary is guaranteed and how
+    # much depends on hours or performance.
     variable_pay_sgd = gross_monthly_median - basic_monthly_median,
     variable_pay_pct = 100 * (gross_monthly_median - basic_monthly_median) /
       basic_monthly_median,
 
-    # JOB QUALITY. The headline employment rate counts any employment. The gap
-    # between it and the full-time permanent rate is the share of employed
-    # graduates in part-time, temporary or freelance work -- a measure of job
-    # security that the headline rate hides.
-    insecure_work_pp = employment_rate_overall - employment_rate_ft_perm
+    # Job quality. The headline employment rate counts any kind of employment.
+    # The gap between it and the full-time permanent rate is the share of
+    # employed graduates in part-time, temporary or freelance work, which the
+    # headline rate hides.
+    insecure_work_pp = employment_rate_overall - employment_rate_ft_perm,
+
+    # A readable version of the follow-up flag, so a legend or caption can say
+    # what it means instead of showing TRUE/FALSE. These records cover
+    # graduates of an earlier year surveyed after practical training, so their
+    # pay cannot be read against a fresh-graduate figure.
+    cohort_basis = if_else(flag_followup_survey,
+                           "Follow-up survey (post-training)",
+                           "Fresh graduates")
   )
 
 # ---- Year benchmarks ---------------------------------------------------------
-# Salaries are reported in nominal dollars, so a 2024 figure is not comparable
-# with a 2013 one. Expressing each programme relative to the median of its own
-# graduating year removes general wage growth and inflation from the comparison,
-# so a rising index means a programme is pulling ahead of its peers rather than
-# simply that time has passed.
+# Salaries are in nominal dollars, so a 2024 figure is not comparable with a
+# 2013 one. Comparing each programme against the median of its own year takes
+# wage growth and inflation out, so a rising index means the programme is
+# pulling ahead of its peers rather than that time has passed.
 #
-# The benchmark is computed from the "All graduates" tier only. Including the
-# SMU honours subset would count those graduates twice and bias the benchmark
-# upwards.
+# The benchmark leaves out two sets of records:
+#
+#   1. The SMU honours subset, which would count those graduates twice.
+#   2. The 76 follow-up-survey records, which cover Law, Medicine, Pharmacy and
+#      Architecture graduates surveyed after their practical training, when
+#      they are qualified and better paid. Including them would make the
+#      benchmark a mix of two career stages and "100" would mean nothing in
+#      particular.
+#
+# So the benchmark is the median fresh-graduate programme in that year. A
+# follow-up record still gets an index against it, which reads as "relative to
+# that year's fresh graduates" and is flagged as not like-for-like.
 year_benchmark <- employment |>
-  filter(cohort_tier == "All graduates", !is.na(gross_monthly_median)) |>
+  filter(cohort_tier == "All graduates", !flag_followup_survey,
+         !is.na(gross_monthly_median)) |>
   group_by(year) |>
   summarise(
     cohort_median_gross = median(gross_monthly_median),
@@ -84,13 +98,47 @@ employment <- employment |>
   )
 
 check_that(!is.na(employment$era), "Every year maps to exactly one era")
+# These checks test whether a label is plausible, not just present.
+#
+# They were added after a bug the structural checks could not catch.
+# shorten_degree() was turning "Arts (with Education)" into the subject "with
+# Education", and "Business (3-year direct Honours)" into "3-year direct
+# Honours". Both are non-empty strings on a valid record, so every structural
+# check passed. Nothing was structurally wrong; the values were just wrong, and
+# they would have appeared on the dashboard as if they were subjects.
+#
+# Checking that a value exists is not the same as checking it makes sense, so
+# these test that each subject label looks like the name of a subject.
 check_that(!is.na(employment$subject) & employment$subject != "",
            "Every record has a subject label")
 
+check_that(!str_detect(employment$subject, regex("^(and|with|or|in|of)\\b",
+                                                 ignore_case = TRUE)),
+           "No subject label begins with a connective, which would mean a title was split at the wrong point",
+           employment |> filter(str_detect(subject, regex("^(and|with|or|in|of)\\b",
+                                                          ignore_case = TRUE))) |>
+             distinct(degree, subject))
+
+check_that(!str_detect(employment$subject,
+                       regex("^[0-9]+-year|^honours|programme$|^hons", ignore_case = TRUE)),
+           "No subject label is a programme-structure descriptor rather than a subject",
+           employment |> filter(str_detect(subject,
+                       regex("^[0-9]+-year|^honours|programme$|^hons", ignore_case = TRUE))) |>
+             distinct(degree, subject))
+
+check_that(!str_detect(employment$subject, "^(School|Faculty|College) of "),
+           "No subject label is a school or faculty name",
+           employment |> filter(str_detect(subject, "^(School|Faculty|College) of ")) |>
+             distinct(degree, subject))
+
+check_that(nchar(employment$subject) >= 3,
+           "No subject label is shorter than three characters",
+           employment |> filter(nchar(subject) < 3) |> distinct(degree, subject))
+
 # ---- Dimension tables --------------------------------------------------------
-# Dimensions hold the descriptive attributes a user slices by. Each is small,
-# has one row per thing, and carries a surrogate integer key that the fact
-# table references. Rows are ordered so Power BI's default sort is meaningful.
+# These hold the descriptive columns a user slices by. Each has one row per
+# thing and an integer key the fact table points at. Rows are ordered so Power
+# BI's default sort makes sense.
 
 dim_year <- employment |>
   distinct(year) |>
@@ -168,6 +216,12 @@ fact_employment <- employment |>
     variable_pay_sgd, variable_pay_pct,
     insecure_work_pp,
     pay_vs_cohort_sgd, pay_index, employment_vs_cohort_pp,
+    # Flags taken from MOE's footnote markers in cleaning step 3. They go in
+    # the fact table rather than a dimension because they vary record by
+    # record, and they need to reach the dashboard: a follow-up record covers a
+    # different cohort at a different career stage, so its pay cannot be
+    # compared with a fresh-graduate record's.
+    footnote_markers, flag_small_sample, flag_followup_survey, cohort_basis,
     flag_gross_below_basic
   )
 
@@ -178,14 +232,13 @@ check_that(nrow(fact_employment) == nrow(employment),
            "The joins to the dimensions neither dropped nor duplicated rows")
 
 # ---- Aggregates for reference lines and trend pages -------------------------
-# Pre-aggregating in R keeps the Power BI measures simple and guarantees the
-# report and the dashboard quote identical numbers.
+# Aggregating here keeps the Power BI measures simple and means the report and
+# the dashboard quote the same numbers.
 #
-# IMPORTANT CAVEAT, carried into the data dictionary and the report: the survey
-# publishes no cohort sizes, so a programme with 15 graduates and one with 400
-# carry equal weight in every aggregate below. These are therefore unweighted
-# medians across programmes, not population medians across graduates, and are
-# labelled as such wherever they appear.
+# Important caveat, repeated in the data dictionary and the report: the survey
+# publishes no cohort sizes, so a programme with 15 graduates counts the same
+# as one with 400. Everything below is an unweighted median across programmes,
+# not a median across graduates, and is labelled that way wherever it appears.
 
 #' Summarise a set of programmes on the measures the dashboard reports
 summarise_outcomes <- function(data) {
@@ -200,15 +253,20 @@ summarise_outcomes <- function(data) {
       mean_ft_perm        = mean(employment_rate_ft_perm, na.rm = TRUE),
       mean_insecure_pp    = mean(insecure_work_pp, na.rm = TRUE),
       median_pay_spread   = median(pay_spread_sgd, na.rm = TRUE),
+      # Each aggregate reports how much of it is not fresh-graduate data and
+      # how much rests on fewer than 30 respondents, so the caveat sits in the
+      # same table as the figure. For Law these show the median is entirely
+      # follow-up-survey data.
+      n_followup_records  = sum(flag_followup_survey),
+      n_small_sample      = sum(flag_small_sample),
       .groups = "drop"
     )
 }
 
-#' Add a year-on-year change on the headline pay measure
+#' Add year-on-year change to the pay measure
 #'
-#' Computed in R rather than left to a DAX measure, so that the growth figures
-#' quoted in the written report are produced by this pipeline and cannot drift
-#' from the ones shown on the dashboard.
+#' Done in R rather than left to a DAX measure, so the growth figures quoted in
+#' the report come from this pipeline and cannot drift from the dashboard's.
 add_yoy <- function(data, group_cols = character()) {
   data |>
     group_by(across(all_of(group_cols))) |>
@@ -235,9 +293,8 @@ agg_field_year <- all_graduates |>
 
 agg_subject <- all_graduates |>
   group_by(subject, field) |> summarise_outcomes() |>
-  # Subjects observed in only a year or two cannot support a trend claim, so the
-  # count is published alongside and used to gate the dashboard's "top subject"
-  # visuals.
+  # A subject seen in only one or two years cannot support a trend claim, so
+  # n_programmes goes out alongside and gates the "top subject" visuals.
   arrange(desc(median_gross))
 
 agg_award_route_year <- all_graduates |>
@@ -245,11 +302,11 @@ agg_award_route_year <- all_graduates |>
   group_by(year, award_route) |> summarise_outcomes() |> add_yoy("award_route")
 
 # ---- The honours premium ----------------------------------------------------
-# SMU is the only university that publishes the same programme twice, once for
-# the whole cohort and once for the subset graduating Cum Laude or above. Paired
-# on programme and year, the two give a direct estimate of what graduating with
-# higher honours is worth -- a question the dataset answers for nobody else, and
-# the basis of the dashboard's comparison page.
+# SMU is the only university publishing the same programme twice, once for the
+# whole cohort and once for the Cum Laude and above subset. Pairing them on
+# programme and year gives an estimate of what graduating with higher honours
+# is worth. No other university's data allows this, and it is the basis of the
+# dashboard's comparison page.
 honours_premium <- employment |>
   filter(university_code == "SMU") |>
   select(year, subject, field, cohort_tier,

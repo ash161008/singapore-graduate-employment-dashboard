@@ -3,18 +3,18 @@
 # ==============================================================================
 # Usage, from the project root:   Rscript R/run_all.R
 #
-# The pipeline is deliberately linear and each stage has one job:
+# The pipeline runs in order and each script does one job:
 #
-#   00_setup.R      packages, paths, and every lookup table used downstream
-#   01_helpers.R    one named function per cleaning decision
-#   02_clean.R      raw file -> one tidy, typed, validated table  (11 steps)
-#   03_transform.R  derived measures -> star schema and aggregates
-#   04_export.R     CSV outputs, audit trail and data dictionary
+#   00_setup.R      packages, paths and the lookup tables
+#   01_helpers.R    one function per cleaning decision
+#   02_clean.R      raw file to one tidy, typed, checked table (13 steps)
+#   03_transform.R  derived measures, star schema and aggregates
+#   04_export.R     the CSVs, the step log and the data dictionary
 #
-# Nothing is cleaned, reshaped or aggregated after this point: Power BI loads
-# the exported CSVs as they are, with no Power Query transformation.
+# Nothing is cleaned, reshaped or aggregated after this. Power BI loads the
+# exported CSVs as they are, with no Power Query steps.
 #
-# Running it twice gives identical output. data/raw/ is only ever read.
+# Running it twice gives the same output. data/raw/ is only ever read.
 # ==============================================================================
 
 started <- Sys.time()

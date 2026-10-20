@@ -1,0 +1,61 @@
+﻿"university_code","field","subject","cohort_basis","flag_small_sample","records"
+"SMU","Law","Law","Follow-up survey (post-training)",FALSE,24
+"NUS","Law","Law","Follow-up survey (post-training)",FALSE,12
+"NUS","Health Sciences","Pharmacy","Follow-up survey (post-training)",FALSE,10
+"NUS","Science","Science","Fresh graduates",TRUE,8
+"NUS","Business & Management","Accountancy","Fresh graduates",TRUE,7
+"SIT","Design & Media","Game Design","Fresh graduates",TRUE,7
+"NTU","Medicine & Dentistry","Biomedical Sciences and Chinese Medicine","Follow-up survey (post-training)",TRUE,6
+"NUS","Architecture & Built Environment","Architecture","Follow-up survey (post-training)",FALSE,6
+"NUS","Medicine & Dentistry","Medicine and Surgery","Follow-up survey (post-training)",FALSE,6
+"SIT","Engineering","Naval Architecture","Fresh graduates",TRUE,6
+"NTU","Engineering","Engineering and Economics","Fresh graduates",TRUE,5
+"NTU","Science","Environmental Earth Systems Sciences","Fresh graduates",TRUE,5
+"NUS","Engineering","Engineering Science","Fresh graduates",TRUE,5
+"SIT","Engineering","Offshore Engineering","Fresh graduates",TRUE,5
+"NTU","Medicine & Dentistry","Medicine","Follow-up survey (post-training)",FALSE,4
+"SIT","Engineering","Marine Engineering","Fresh graduates",TRUE,4
+"SIT","Health Sciences","Radiation Therapy","Fresh graduates",TRUE,4
+"NTU","Arts, Humanities & Social Sciences","Philosophy","Fresh graduates",TRUE,3
+"NTU","Education","Science with Education","Fresh graduates",TRUE,3
+"NTU","Medicine & Dentistry","Biomedical Sciences (Traditional Chinese Medicine)","Follow-up survey (post-training)",FALSE,3
+"NUS","Computing & IT","Computational Biology","Fresh graduates",TRUE,3
+"SIT","Computing & IT","Computer Science and Game Design","Fresh graduates",TRUE,3
+"NTU","Arts, Humanities & Social Sciences","Biological Sciences and Psychology","Fresh graduates",TRUE,2
+"NTU","Computing & IT","Business and Computing","Fresh graduates",TRUE,2
+"NTU","Interdisciplinary","Interdisciplinary Double Major","Fresh graduates",TRUE,2
+"NUS","Architecture & Built Environment","Landscape Architecture","Fresh graduates",TRUE,2
+"NUS","Arts, Humanities & Social Sciences","Arts","Fresh graduates",TRUE,2
+"NUS","Arts, Humanities & Social Sciences","Music","Fresh graduates",TRUE,2
+"NUS","Computing & IT","Information Security","Fresh graduates",TRUE,2
+"NUS","Design & Media","Industrial Design","Fresh graduates",TRUE,2
+"SIT","Business & Management","Food Business Management","Fresh graduates",TRUE,2
+"SIT","Design & Media","Digital Arts and Animation","Fresh graduates",TRUE,2
+"SIT","Engineering","Electrical Engineering and Information Technology","Fresh graduates",TRUE,2
+"SMU","Computing & IT","Computing and Law","Fresh graduates",TRUE,2
+"NTU","Computing & IT","Data Science and Artificial Intelligence","Fresh graduates",TRUE,1
+"NTU","Medicine & Dentistry","Biomedical Sciences and Chinese Medicine","Follow-up survey (post-training)",FALSE,1
+"NTU","Medicine & Dentistry","Biomedical Sciences and Chinese Medicine","Fresh graduates",TRUE,1
+"NTU","Medicine & Dentistry","Biomedical Sciences and Medicine (Chinese Medicine)","Follow-up survey (post-training)",FALSE,1
+"NUS","Architecture & Built Environment","Architecture","Follow-up survey (post-training)",TRUE,1
+"NUS","Business & Management","Business Administration","Fresh graduates",TRUE,1
+"NUS","Computing & IT","Data Science and Analytics","Fresh graduates",TRUE,1
+"NUS","Engineering","Biomedical Engineering","Fresh graduates",TRUE,1
+"NUS","Engineering","Environmental Engineering","Fresh graduates",TRUE,1
+"NUS","Health Sciences","Pharmaceutical Science","Fresh graduates",TRUE,1
+"NUS","Medicine & Dentistry","Dental Surgery","Fresh graduates",TRUE,1
+"NUS","Medicine & Dentistry","Medicine and Surgery (MBBS)","Follow-up survey (post-training)",FALSE,1
+"SIT","Business & Management","Hospitality Business","Fresh graduates",TRUE,1
+"SIT","Computing & IT","Information and Communications Technology (Information Security)","Fresh graduates",TRUE,1
+"SIT","Engineering","Aerospace Systems","Fresh graduates",TRUE,1
+"SIT","Engineering","Electrical Power Engineering","Fresh graduates",TRUE,1
+"SIT","Engineering","Mechanical Design and Manufacturing Engineering","Fresh graduates",TRUE,1
+"SIT","Engineering","Sustainable Infrastructure Engineering (Land)","Fresh graduates",TRUE,1
+"SIT","Engineering","Systems Engineering (ElectroMechanical Systems)","Fresh graduates",TRUE,1
+"SIT","Health Sciences","Diagnostic Radiography","Fresh graduates",TRUE,1
+"SIT","Health Sciences","Dietetics and Nutrition","Fresh graduates",TRUE,1
+"SUSS","Arts, Humanities & Social Sciences","Public Safety and Security","Fresh graduates",TRUE,1
+"SUSS","Business & Management","Finance","Fresh graduates",TRUE,1
+"SUSS","Business & Management","Supply Chain Management","Fresh graduates",TRUE,1
+"SUSS","Education","Early Childhood Education","Fresh graduates",TRUE,1
+"SUTD","Architecture & Built Environment","Architecture and Sustainable Design","Follow-up survey (post-training)",FALSE,1

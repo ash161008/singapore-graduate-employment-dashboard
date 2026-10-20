@@ -1,0 +1,8 @@
+﻿"marker","meaning","handled_as"
+"*","SMU courses are direct four-year programmes whose graduates may be awarded Cum Laude and above; SMU publishes both the whole cohort and that subset","cohort_tier"
+"^","Figures are based on fewer than 30 respondents","flag_small_sample"
+"^^","Figures include graduates of Bachelor of Engineering (Bioengineering), a course merged into Biomedical Engineering in 2014","Documented only"
+"**","No figures published, because of a small number of graduates and/or a low response rate","Explains the suppressed records"
+"#","Figures come from a follow-up survey of the prior year's graduates, taken after their practical training or equivalent (Law, Medicine, Pharmacy, Biomedical Sciences & Chinese Medicine); for Architecture, of graduates three years earlier","flag_followup_survey"
+"##","NTU Medicine figures come from a follow-up survey taken after housemanship or first-year residency","flag_followup_survey"
+"###","SUTD Architecture and Sustainable Design figures come from a follow-up survey taken after practical training","flag_followup_survey"
